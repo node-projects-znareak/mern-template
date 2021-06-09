@@ -1,0 +1,32 @@
+.container {
+  background: #161822;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+  padding: 3.8rem 2.8rem;
+
+  * {
+    color: #fff;
+  }
+
+  .lead {
+    font-size: 90%;
+    color: rgb(189, 189, 189);
+    display: block;
+    margin: 1rem 0;
+  }
+}
+
+.buttonContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    margin-right: 10px;
+  }
+
+  svg {
+    margin-top: 5px;
+  }
+}

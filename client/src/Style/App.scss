@@ -1,0 +1,300 @@
+*,
+*::before {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  text-rendering: optimizeLegibility;
+  text-decoration: none;
+  color: #fff;
+}
+
+$img-radius: 4px;
+
+body {
+  background: #161822;
+}
+
+button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed !important;
+}
+
+input {
+  display: block;
+  width: 100%;
+  background: transparent !important;
+  padding: 0.8rem;
+  padding-left: 2rem;
+  border: 1px solid #252733;
+  border-radius: 5px;
+}
+
+.nav {
+  display: flex;
+  background: #000000;
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  left: 0;
+  > .button {
+    margin-right: 1rem;
+  }
+}
+
+.group {
+  margin-bottom: 1.2rem;
+  position: relative;
+
+  &Icon {
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 8px;
+  }
+}
+
+.modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 102%;
+  background: rgba(0, 0, 0, 0.609);
+  z-index: 500;
+
+  .modal-wrapper {
+    position: relative;
+    width: auto;
+    > img {
+      max-width: 100%;
+      max-height: 85vh;
+      object-fit: contain;
+    }
+  }
+
+  .modal-close {
+    position: absolute;
+    right: -6px;
+    top: -51px;
+    font-size: 2rem;
+    color: #fff;
+    background: transparent;
+    outline: none;
+    border: 0;
+    cursor: pointer;
+    padding: 0.3rem;
+  }
+}
+
+.massory {
+  columns: 4;
+  column-gap: 0;
+  break-inside: avoid;
+  margin-top: 1rem;
+  margin-bottom: 5rem;
+  .img {
+    cursor: pointer;
+    position: relative;
+    margin: 0 6px;
+    margin-bottom: 10px;
+    border-radius: $img-radius;
+
+    .img-figure {
+      position: relative;
+
+      &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background: linear-gradient(170deg, transparent, rgba(0, 0, 0, 0.797));
+        z-index: 1;
+        border-radius: $img-radius;
+      }
+    }
+
+    .img-info {
+      position: absolute;
+      font-size: 12px;
+      padding: 0.8rem;
+      z-index: 2;
+      width: 100%;
+      bottom: 0;
+      > a {
+        color: #fff;
+        font-weight: bold;
+        letter-spacing: 1px;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    img {
+      width: 100%;
+      display: block;
+      transition: all 0.2s ease;
+      border-radius: $img-radius;
+    }
+  }
+}
+
+.image-loader {
+  width: 100%;
+  height: 350px;
+  padding: 3px;
+  background: linear-gradient(#eee, rgb(211, 211, 211), #eee);
+  background-size: 1100px;
+  background-clip: content-box;
+  animation: loading 4s linear infinite alternate-reverse;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0.8rem;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 0;
+  background: #1687a7;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #fff;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.15rem #1688a748;
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position-y: 0;
+  }
+
+  100% {
+    background-position-y: -1000px;
+  }
+}
+
+@media screen and (max-width: 980px) {
+  .massory {
+    columns: 3;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .massory {
+    columns: 2;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .massory {
+    columns: 1;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .modal-close {
+    right: 16px;
+    top: -36px;
+  }
+
+  .modal-wrapper > img {
+    width: 100%;
+    padding: 1rem;
+  }
+}
+
+.sk-cube-grid {
+  width: 40px;
+  height: 40px;
+  margin: 25rem auto;
+}
+
+.sk-cube-grid .sk-cube {
+  width: 33%;
+  height: 33%;
+  background-color: rgb(218, 218, 218);
+  float: left;
+  -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
+  animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
+}
+.sk-cube-grid .sk-cube1 {
+  -webkit-animation-delay: 0.2s;
+  animation-delay: 0.2s;
+}
+.sk-cube-grid .sk-cube2 {
+  -webkit-animation-delay: 0.3s;
+  animation-delay: 0.3s;
+}
+.sk-cube-grid .sk-cube3 {
+  -webkit-animation-delay: 0.4s;
+  animation-delay: 0.4s;
+}
+.sk-cube-grid .sk-cube4 {
+  -webkit-animation-delay: 0.1s;
+  animation-delay: 0.1s;
+}
+.sk-cube-grid .sk-cube5 {
+  -webkit-animation-delay: 0.2s;
+  animation-delay: 0.2s;
+}
+.sk-cube-grid .sk-cube6 {
+  -webkit-animation-delay: 0.3s;
+  animation-delay: 0.3s;
+}
+.sk-cube-grid .sk-cube7 {
+  -webkit-animation-delay: 0s;
+  animation-delay: 0s;
+}
+.sk-cube-grid .sk-cube8 {
+  -webkit-animation-delay: 0.1s;
+  animation-delay: 0.1s;
+}
+.sk-cube-grid .sk-cube9 {
+  -webkit-animation-delay: 0.2s;
+  animation-delay: 0.2s;
+}
+
+@-webkit-keyframes sk-cubeGridScaleDelay {
+  0%,
+  70%,
+  100% {
+    -webkit-transform: scale3D(1, 1, 1);
+    transform: scale3D(1, 1, 1);
+  }
+  35% {
+    -webkit-transform: scale3D(0, 0, 1);
+    transform: scale3D(0, 0, 1);
+  }
+}
+
+@keyframes sk-cubeGridScaleDelay {
+  0%,
+  70%,
+  100% {
+    -webkit-transform: scale3D(1, 1, 1);
+    transform: scale3D(1, 1, 1);
+  }
+  35% {
+    -webkit-transform: scale3D(0, 0, 1);
+    transform: scale3D(0, 0, 1);
+  }
+}

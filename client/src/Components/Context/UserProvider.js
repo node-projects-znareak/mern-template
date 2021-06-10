@@ -1,5 +1,6 @@
 import { createContext, useState, useMemo, useEffect } from "react";
 import { getUserInfo } from "../../Helpers/api";
+import { getToken } from "../../Helpers/token";
 
 export const UserContext = createContext();
 
@@ -19,7 +20,7 @@ export default function UserProvider(props) {
       }
     }
 
-    userInfo();
+    getToken() && userInfo();
   }, []);
 
   return <UserContext.Provider value={value} {...props} />;

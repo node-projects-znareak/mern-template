@@ -2,7 +2,7 @@
 [![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)](https://github.com/node-projects-znareak/mern-template)
 [![Twitter: libardo\_r12](https://img.shields.io/twitter/follow/libardo\_r12.svg?style=social)](https://twitter.com/libardo\_r12)
 
-> Welcome to web page for upload your images 📷
+> Welcome to MERN TEMPLATE for your own projects :)
  
 ### 🏠 [Homepage](https://github.com/node-projects-znareak/mern-template)
 

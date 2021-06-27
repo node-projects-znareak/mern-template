@@ -42,6 +42,10 @@ function wrapServerErrors(app) {
   if (typeof app.use !== "function") {
     throw new Error("The `app` param isn't a instace of express ");
   }
+  app.use((req, res, next) => {
+    res.status(404).json({ status: 404, data: "Not Found" });
+    next();
+  });
   // insertar los middlewares de errores en el servidor `app`
   app.use(logErrors);
   app.use(wrapErrors);

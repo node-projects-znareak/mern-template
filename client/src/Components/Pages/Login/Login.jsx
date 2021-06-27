@@ -1,6 +1,6 @@
 import useBody from "../../Hooks/useBody";
 import css from "../Style.module.scss";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Loader from "react-loader-spinner";
 import { BiUser, BiKey } from "react-icons/bi";
 import useAuth from "../../Hooks/useAuth";
@@ -9,6 +9,7 @@ import { setToken } from "../../../Helpers/token";
 import Btn from "../../Elements/Btn";
 import ErrorText from "../../Elements/ErrorText";
 import useCurrentUser from "../../Hooks/useCurrentUser";
+import Captcha from "../../Captcha";
 
 const cssBody = {
   backgroundSize: "cover",
@@ -21,7 +22,9 @@ const cssBody = {
 export default function Login() {
   useBody(cssBody);
   const { setUser } = useCurrentUser();
+  const [isValidCaptcha, setIsValidCaptcha] = useState(false);
   const [auth, setAuth] = useState({ email: "", password: "" });
+  const captchaRef = useRef(null);
   const login = useAuth();
   const { push } = useHistory();
 
@@ -32,12 +35,22 @@ export default function Login() {
 
   async function handleOnSubmit(e) {
     e.preventDefault();
+    if (!isValidCaptcha) return;
+    
     const res = await login.mutateAsync(auth);
 
     if (res.ok) {
       setToken(res.data.token);
       setUser(res.data.user);
       push("/home");
+    }
+  }
+
+  function handleChangeCaptcha() {
+    if (captchaRef.current.getValue()) {
+      setIsValidCaptcha(true);
+    } else {
+      setIsValidCaptcha(false);
     }
   }
 
@@ -80,7 +93,11 @@ export default function Login() {
         />
 
         <div className="group">
-          <Btn type="submit" disabled={login.isLoading}>
+          <Captcha ref={captchaRef} onChange={handleChangeCaptcha} />
+        </div>
+
+        <div className="group">
+          <Btn type="submit" disabled={login.isLoading || !isValidCaptcha}>
             <div className={css.buttonContent}>
               <span>Iniciar</span>
               {login.isLoading && (

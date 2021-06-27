@@ -4,10 +4,6 @@ function unauthorized(res, message) {
   res.status(401).json(boom.unauthorized(message).output.payload);
 }
 
-function invalidToken(res) {
-  res.json(unauthorized(res, "The user's token is invalid"));
-}
-
 function error(
   res,
   data = "An error while process the request",
@@ -35,7 +31,6 @@ function success(
 
 module.exports = {
   unauthorized,
-  invalidToken,
   success,
   error,
 };

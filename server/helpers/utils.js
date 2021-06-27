@@ -1,6 +1,7 @@
 const chalk = require("chalk");
 const jwt = require("jsonwebtoken");
-const { SECRET_TOKEN } = require("../config/variables").SERVER.API;
+const bcrypt = require("bcryptjs");
+const { SECRET_TOKEN, SALT_BCRYPT } = require("../config/variables").SERVER.API;
 const message = {
   success(str) {
     console.log(chalk.greenBright(`[✔️] ${str}`) + "\n");
@@ -32,4 +33,27 @@ function getTokenInfo(token) {
   }));
 }
 
-module.exports = { isRequestAjaxOrApi, message, getTokenInfo };
+function hashPassword(password) {
+  const salt = bcrypt.genSaltSync(SALT_BCRYPT);
+  const hash = bcrypt.hashSync(password, salt);
+  return hash;
+}
+
+function isInvalidPassword(hashedPassword, password) {
+  const result = bcrypt.compareSync(hashedPassword, password);
+  return !result;
+}
+
+function getTokenFromPayload(payload) {
+  const token = jwt.sign({ ...payload }, SECRET_TOKEN);
+  return token;
+}
+
+module.exports = {
+  isRequestAjaxOrApi,
+  message,
+  getTokenInfo,
+  hashPassword,
+  isInvalidPassword,
+  getTokenFromPayload,
+};

@@ -1,27 +1,9 @@
-import { createContext, useState, useMemo, useEffect } from "react";
-import { getUserInfo } from "../../Helpers/api";
-import { getToken } from "../../Helpers/token";
+import { createContext } from "react";
+import useUserInfo from "../Hooks/useUserInfo";
 
 export const UserContext = createContext();
 
 export default function UserProvider(props) {
-  const [user, setUser] = useState({ userError: false });
-  const value = useMemo(() => ({ user, setUser }), [user, setUser]);
-
-  useEffect(() => {
-    async function userInfo() {
-      try {
-        const user = await getUserInfo();
-        if (user) setUser((u) => ({ ...user, ...u }));
-      } catch (error) {
-        setUser({ userError: true });
-        console.warn("%cError in downloading the user info:");
-        console.log(error);
-      }
-    }
-
-    getToken() && userInfo();
-  }, []);
-
+  const value = useUserInfo();
   return <UserContext.Provider value={value} {...props} />;
 }

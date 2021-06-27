@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
 const existsToken = require("../../middlewares/existsToken");
-const bcrypt = require("bcryptjs");
 const { validateLogin } = require("../../helpers/validations");
-const { SECRET_TOKEN } = require("../../config/variables").SERVER.API;
-const existsUser = require("../../controllers/existsUser");
+const { existsUser, createUser } = require("../../controllers/userController");
 const { unauthorized, success, error } = require("../../helpers/httpResponses");
+const {
+  isInvalidPassword,
+  getTokenFromPayload,
+  hashPassword,
+} = require("../../helpers/utils");
 
 router.post("/login", async (req, res, next) => {
   try {
@@ -16,19 +18,37 @@ router.post("/login", async (req, res, next) => {
       return error(res, isInvalidPayload.details[0].message);
     }
 
-    const user = await existsUser({ email, password });
+    const user = await existsUser(email);
+    console.log(user);
     if (user) {
-      const isValidPassword = bcrypt.compareSync(password, user.password);
-      if (!isValidPassword) return unauthorized(res, "Clave incorrecta");
+      if (isInvalidPassword(password, user.password))
+        return unauthorized(res, "Clave incorrecta");
 
-      const token = jwt.sign({ ...user }, SECRET_TOKEN);
+      delete user.password;
+      const token = getTokenFromPayload(user);
       return success(res, { user, token });
     }
     unauthorized(res, "Usuario o clave incorrecta");
   } catch (err) {
     next(err);
   }
-}); 
+});
+
+router.post("/signup", async (req, res, next) => {
+  try {
+    const { email, password, name } = req.body;
+    const passwordHashed = hashPassword(password);
+    const userCreated = await createUser({
+      name,
+      email,
+      password: passwordHashed,
+    });
+
+    success(res, userCreated, 201);
+  } catch (err) {
+    next(err);
+  }
+});
 
 router.get("/verify-token", existsToken, (req, res, next) => {
   try {

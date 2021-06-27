@@ -1,12 +1,4 @@
-import {
-  api,
-  image,
-  upload,
-  login,
-  token,
-  userInfo,
-  perfilPhoto,
-} from "../config/config";
+import { api, login, signup, token, userInfo } from "../config/config";
 import { getToken } from "./token";
 import axios from "axios";
 
@@ -20,24 +12,14 @@ const config = () => ({
   },
 });
 
-export async function getImages() {
-  const res = await instance.get(image, config());
-  return res?.data?.data || [];
-}
-
 export async function setLogin(auth) {
   const data = await instance.post(login, auth);
   return data?.data;
 }
 
-export async function uploadImage(payload) {
-  const data = await instance.post(upload, payload, config());
+export async function signupUser(payload) {
+  const data = await instance.post(signup, payload);
   return data?.data;
-}
-
-export async function setPerfilPhoto(payload) {
-  const data = await instance.post(perfilPhoto, payload, config());
-  return data?.data?.data;
 }
 
 export async function verifyToken() {

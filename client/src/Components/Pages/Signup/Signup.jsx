@@ -2,14 +2,13 @@ import useBody from "../../Hooks/useBody";
 import css from "../Style.module.scss";
 import { useState, useRef } from "react";
 import Loader from "react-loader-spinner";
-import { BiEnvelope, BiKey } from "react-icons/bi";
+import { BiUser, BiEnvelope, BiKey } from "react-icons/bi";
 import useAuth from "../../Hooks/useAuth";
 import { useHistory, Link } from "react-router-dom";
-import { setToken } from "../../../Helpers/token";
 import Btn from "../../Elements/Btn";
 import ErrorText from "../../Elements/ErrorText";
-import useCurrentUser from "../../Hooks/useCurrentUser";
 import Captcha from "../../Captcha";
+import { signupUser } from "../../../Helpers/api";
 
 const cssBody = {
   backgroundSize: "cover",
@@ -19,11 +18,10 @@ const cssBody = {
   justifyContent: "center",
 };
 
-export default function Login() {
+export default function Signup() {
   useBody(cssBody);
-  const { setUser } = useCurrentUser();
   const [isValidCaptcha, setIsValidCaptcha] = useState(false);
-  const [auth, setAuth] = useState({ email: "", password: "" });
+  const [auth, setAuth] = useState({ email: "", password: "", name: "" });
   const captchaRef = useRef(null);
   const login = useAuth();
   const { push } = useHistory();
@@ -36,14 +34,9 @@ export default function Login() {
   async function handleOnSubmit(e) {
     e.preventDefault();
     if (!isValidCaptcha) return;
-    
-    const res = await login.mutateAsync(auth);
 
-    if (res.ok) {
-      setToken(res.data.token);
-      setUser(res.data.user);
-      push("/home");
-    }
+    const res = await signupUser(auth);
+    if (res.ok) push("/");
   }
 
   function handleChangeCaptcha() {
@@ -56,12 +49,21 @@ export default function Login() {
 
   return (
     <div className={css.container}>
-      <h2>Inicia Sesión</h2>
-      <p className={css.lead}>
-        Necesitas tener una cuenta para acceder al contenido de esta página.
-      </p>
+      <h2 style={{ marginBottom: "1rem" }}>Registrate</h2>
 
       <form autoComplete="off" onSubmit={handleOnSubmit}>
+        <div className="group">
+          <BiUser className="groupIcon" />
+          <input
+            type="text"
+            name="name"
+            id="name"
+            placeholder="Name"
+            onChange={handleOnChange}
+            value={auth.name}
+            required
+          />
+        </div>
         <div className="group">
           <BiEnvelope className="groupIcon" />
           <input
@@ -99,14 +101,14 @@ export default function Login() {
         <div className="group">
           <Btn type="submit" disabled={login.isLoading || !isValidCaptcha}>
             <div className={css.buttonContent}>
-              <span>Iniciar</span>
+              <span>Registrarse</span>
               {login.isLoading && (
                 <Loader height={20} width={20} color="#fff" type="Oval" />
               )}
             </div>
           </Btn>
           <small className={css.lead} style={{ fontSize: "80%" }}>
-            Si no tienes cuenta, puedes crearla <Link to="/signup">aca</Link>.
+            Si ya tienes cuenta, entra <Link to="/login">aca</Link>.
           </small>
         </div>
       </form>

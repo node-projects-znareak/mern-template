@@ -1,4 +1,4 @@
-const { invalidToken, error } = require("../helpers/httpResponses");
+const { error } = require("../helpers/httpResponses");
 const { getTokenInfo } = require("../helpers/utils");
 
 function existsToken(req, res, next) {
@@ -6,7 +6,9 @@ function existsToken(req, res, next) {
   if (headers) {
     const token = headers.split(" ")[1];
     req.token = token;
-    return getTokenInfo(token).isValid ? next() : invalidToken(res);
+    return getTokenInfo(token).isValid
+      ? next()
+      : error(res, "The user token is invalid");
   }
 
   error(res, "The authorization header missing");

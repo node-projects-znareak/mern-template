@@ -8,7 +8,7 @@ export default function useVerifyToken() {
     enabled: existsToken(),
   });
   const isValidToken = isError ? false : data;
-  console.log(isValidToken);
+
   useEffect(() => {
     if (!isLoading && !isValidToken) removeToken();
   }, [isValidToken, isLoading]);

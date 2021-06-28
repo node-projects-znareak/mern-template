@@ -108,7 +108,7 @@ export default function Signup() {
             </div>
           </Btn>
           <small className={css.lead} style={{ fontSize: "80%" }}>
-            Si ya tienes cuenta, entra <Link to="/login">aca</Link>.
+            Si ya tienes cuenta, entra <Link to="/">aca</Link>.
           </small>
         </div>
       </form>

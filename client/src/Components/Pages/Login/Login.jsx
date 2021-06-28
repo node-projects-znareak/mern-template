@@ -22,7 +22,7 @@ const cssBody = {
 export default function Login() {
   useBody(cssBody);
   const { setUser } = useCurrentUser();
-  const [isValidCaptcha, setIsValidCaptcha] = useState(true);
+  const [isValidCaptcha, setIsValidCaptcha] = useState(false);
   const [auth, setAuth] = useState({ email: "", password: "" });
   const captchaRef = useRef(null);
   const login = useAuth();
@@ -36,7 +36,7 @@ export default function Login() {
   async function handleOnSubmit(e) {
     e.preventDefault();
     if (!isValidCaptcha) return;
-    
+
     const res = await login.mutateAsync(auth);
 
     if (res.ok) {
@@ -92,9 +92,9 @@ export default function Login() {
           text="Ocurrió un error, verifica tus datos."
         />
 
-        {/* <div className="group">
+        <div className="group">
           <Captcha ref={captchaRef} onChange={handleChangeCaptcha} />
-        </div> */}
+        </div>
 
         <div className="group">
           <Btn type="submit" disabled={login.isLoading || !isValidCaptcha}>

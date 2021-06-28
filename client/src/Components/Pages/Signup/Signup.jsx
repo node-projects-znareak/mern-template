@@ -47,6 +47,10 @@ export default function Signup() {
     }
   }
 
+  function handleExpireCaptcha() {
+    setIsValidCaptcha(false);
+  }
+
   return (
     <div className={css.container}>
       <h2 style={{ marginBottom: "1rem" }}>Registrate</h2>
@@ -89,13 +93,20 @@ export default function Signup() {
             required
           />
         </div>
+        <small className={css.lead}>
+          La clave sólo debe tener letras mayúsculas, minúsculas y un número
+        </small>
         <ErrorText
           isVisible={login.isError}
           text="Ocurrió un error, verifica tus datos."
         />
 
         <div className="group">
-          <Captcha ref={captchaRef} onChange={handleChangeCaptcha} />
+          <Captcha
+            ref={captchaRef}
+            onChange={handleChangeCaptcha}
+            onExpired={handleExpireCaptcha}
+          />
         </div>
 
         <div className="group">

@@ -1,25 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const existsToken = require("../../middlewares/existsToken");
-const { validateLogin } = require("../../helpers/validations");
 const { existsUser, createUser } = require("../../controllers/userController");
 const { unauthorized, success, error } = require("../../helpers/httpResponses");
+const {
+  validateLoginBody,
+  validateRegisterBody,
+} = require("../../middlewares/validations");
 const {
   isInvalidPassword,
   getTokenFromPayload,
   hashPassword,
 } = require("../../helpers/utils");
 
-router.post("/login", async (req, res, next) => {
+router.post("/login", validateLoginBody, async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const isInvalidPayload = validateLogin.validate({ email, password }).error;
-    if (isInvalidPayload) {
-      return error(res, isInvalidPayload.details[0].message);
-    }
-
     const user = await existsUser(email);
-    console.log(user);
     if (user) {
       if (isInvalidPassword(password, user.password))
         return unauthorized(res, "Clave incorrecta");
@@ -34,9 +31,12 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-router.post("/signup", async (req, res, next) => {
+router.post("/signup", validateRegisterBody, async (req, res, next) => {
   try {
     const { email, password, name } = req.body;
+    const user = await existsUser(email);
+    if (user) return error(res, "El correo ya está en uso");
+
     const passwordHashed = hashPassword(password);
     const userCreated = await createUser({
       name,

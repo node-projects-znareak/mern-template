@@ -54,6 +54,10 @@ export default function Login() {
     }
   }
 
+  function handleExpireCaptcha() {
+    setIsValidCaptcha(false);
+  }
+
   return (
     <div className={css.container}>
       <h2>Inicia Sesión</h2>
@@ -93,7 +97,11 @@ export default function Login() {
         />
 
         <div className="group">
-          <Captcha ref={captchaRef} onChange={handleChangeCaptcha} />
+          <Captcha
+            ref={captchaRef}
+            onChange={handleChangeCaptcha}
+            onExpired={handleExpireCaptcha}
+          />
         </div>
 
         <div className="group">

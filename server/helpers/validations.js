@@ -15,7 +15,7 @@ const email = Joi.string()
 const password = Joi.string()
   .min(6)
   .max(16)
-  .pattern(/^^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/)
+  .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/)
   .required()
   .messages({
     "string.pattern.base": `La clave debe tener letras mayúsculas, minúsculas y números`,
@@ -24,12 +24,24 @@ const password = Joi.string()
     "string.max": `La clave debe tener un máximo de {#limit} caracteres`,
   });
 
+const name = Joi.string()
+  .min(4)
+  .max(16)
+  .pattern(/^[a-zA-Z0-9]+([_ -]?[a-zA-Z0-9])*$/)
+  .required()
+  .messages({
+    "string.pattern.base": `El nombre de usuario debe ser letras, números y guiones (_-)`,
+    "string.empty": `El nombre de usuario no debe estar vacío`,
+    "string.min": `El nombre de usuario debe tener un mínimo de {#limit} caracteres`,
+    "string.max": `El nombre de usuario debe tener un máximo de {#limit} caracteres`,
+  });
 
 const validateLogin = Joi.object({ email, password });
-//const validateRegister = Joi.object({})
+const validateRegister = Joi.object({ name, email, password });
 
 module.exports = {
   email,
   password,
   validateLogin,
+  validateRegister,
 };

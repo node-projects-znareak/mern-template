@@ -26,8 +26,8 @@ export default function NotFound() {
         dignissimos!
       </p>
 
-      <Link to={user.id ? "/home" : "/"}>
-        <Btn>Go to {user.id ? "home" : "login"}</Btn>
+      <Link to={user?._id ? "/home" : "/"}>
+        <Btn>Go to {user?._id ? "home" : "login"}</Btn>
       </Link>
     </div>
   );

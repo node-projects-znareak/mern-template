@@ -1,17 +1,17 @@
 import { Route, Redirect } from "react-router-dom";
 import { existsToken } from "../Helpers/token";
 import Loader from "../Components/Loaders/loader";
-import useVerifyToken from "./Hooks/useVerifyToken";
+import useCurrentUser from "./Hooks/useCurrentUser";
 
 export default function RedirectRoute({ component: Component, ...rest }) {
-  const { isValidToken, isLoading } = useVerifyToken();
+  const { user, isLoading } = useCurrentUser();
   if (isLoading) return <Loader />;
-  
+
   return (
     <Route
       {...rest}
       render={(props) =>
-        existsToken() && isValidToken ? (
+        existsToken() && user ? (
           <Redirect to="/home" />
         ) : (
           <Component {...props} />

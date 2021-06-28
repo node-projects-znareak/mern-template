@@ -1,7 +1,5 @@
-import { createContext } from "react";
 import useUserInfo from "../Hooks/useUserInfo";
-
-export const UserContext = createContext();
+import UserContext from "./UserContext";
 
 export default function UserProvider(props) {
   const value = useUserInfo();

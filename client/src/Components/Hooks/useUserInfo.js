@@ -3,33 +3,29 @@ import { getUserInfo } from "../../Helpers/api";
 import { existsToken, removeToken } from "../../Helpers/token";
 import { useQuery } from "react-query";
 
-const default_state = { useError: false };
+const default_state = null;
 
 export default function useUserInfo() {
-  const { data, isError, error } = useQuery("userInfo", getUserInfo, {
+  const { data, isError, isLoading } = useQuery("userInfo", getUserInfo, {
     enabled: existsToken(),
   });
   const [user, setUser] = useState(default_state);
+
   const logout = useCallback(() => {
     setUser(default_state);
     removeToken();
-    window.location.href = "/";
   }, []);
 
   const value = useMemo(
-    () => ({ user, logout, setUser }),
-    [user, logout, setUser]
+    () => ({ user, logout, isLoading, setUser }),
+    [user, logout, isLoading, setUser]
   );
 
   useEffect(() => {
     if (data && !isError) {
-      setUser((u) => ({ ...data, ...u }));
+      setUser((userState) => ({ ...data, ...userState }));
     }
-    if (isError) {
-      console.log(error);
-      setUser({ userError: true });
-    }
-  }, [data, isError, error]);
+  }, [data, isError]);
 
   return value;
 }

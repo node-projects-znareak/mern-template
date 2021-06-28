@@ -8,6 +8,7 @@ import "./Style/App.scss";
 const client = new QueryClient({
   defaultOptions: {
     queries: {
+      refetchOnReconnect: false,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
       retry: 0,

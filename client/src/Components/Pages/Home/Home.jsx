@@ -1,14 +1,17 @@
 import React from "react";
 import Btn from "../../Elements/Btn";
-import useUserInfo from "../../Hooks/useUserInfo";
 import css from "../../../Style/Home.module.scss";
+import useCurrentUser from "../../Hooks/useCurrentUser";
 
 export default function Home() {
-  const { logout } = useUserInfo();
+  const { logout, user } = useCurrentUser();
   console.log("Home component");
   return (
     <div className={css.container}>
-      <h2>Esto es la home</h2>
+      <h2>Bivenido {user.name}</h2>
+      <h3>Tu rol es {user.isAdmin ? "administrador" : "usuario"}</h3>
+      <hr />
+      <br />
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem
         placeat dolor nulla expedita voluptatem temporibus dolorem id hic

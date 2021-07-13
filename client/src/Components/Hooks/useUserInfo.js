@@ -16,14 +16,15 @@ export default function useUserInfo() {
     removeToken();
   }, []);
 
-  const value = useMemo(
-    () => ({ user, logout, isLoading, setUser }),
-    [user, logout, isLoading, setUser]
-  );
+  const value = useMemo(() => {
+    return { user, logout, isLoading, setUser };
+  }, [user, logout, isLoading, setUser]);
 
   useEffect(() => {
-    if (data && !isError) {
+    if (!isError && data && Object.keys(data).length > 0) {
       setUser((userState) => ({ ...data, ...userState }));
+    } else {
+      removeToken();
     }
   }, [data, isError]);
 

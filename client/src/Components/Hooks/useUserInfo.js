@@ -24,7 +24,7 @@ export default function useUserInfo() {
     const userIsValid = data && Object.keys(data).length > 0;
     if (!isError && userIsValid) {
       setUser((userState) => ({ ...data, ...userState }));
-    } else if (isError && !userIsValid) {
+    } else if (isError || !userIsValid) {
       removeToken();
     }
   }, [data, isError]);

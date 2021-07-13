@@ -21,14 +21,12 @@ export default function useUserInfo() {
   }, [user, logout, isLoading, setUser]);
 
   useEffect(() => {
-    const userIsValid = data && Object.keys(data).length > 0;
-    if (!isError && userIsValid) {
+    if (!isError && data) {
       setUser((userState) => ({ ...data, ...userState }));
-    } else if (isError || !userIsValid) {
+    } else if (isError) {
       removeToken();
     }
   }, [data, isError]);
 
   return value;
 }
-    

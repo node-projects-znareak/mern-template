@@ -1,18 +1,16 @@
 import useBody from "../../Hooks/useBody";
 import css from "../Style.module.scss";
+import useAuth from "../../Hooks/useAuth";
+import Btn from "../../Elements/Btn";
+import ErrorText from "../../Elements/ErrorText";
+import Captcha from "../../Captcha";
+
+import { useHistory, Link } from "react-router-dom";
 import { useState, useRef } from "react";
 import Loader from "react-loader-spinner";
 import { BiEnvelope, BiKey } from "react-icons/bi";
-import useAuth from "../../Hooks/useAuth";
-import { useHistory, Link } from "react-router-dom";
-import { setToken } from "../../../Helpers/token";
-import Btn from "../../Elements/Btn";
-import ErrorText from "../../Elements/ErrorText";
-import useCurrentUser from "../../Hooks/useCurrentUser";
-import Captcha from "../../Captcha";
 
 const cssBody = {
-  backgroundSize: "cover",
   height: "100vh",
   display: "flex",
   alignItems: "center",
@@ -21,13 +19,12 @@ const cssBody = {
 
 export default function Login() {
   useBody(cssBody);
-  const { setUser } = useCurrentUser();
   const [isValidCaptcha, setIsValidCaptcha] = useState(false);
   const [auth, setAuth] = useState({ email: "", password: "" });
   const captchaRef = useRef(null);
   const login = useAuth();
   const { push } = useHistory();
-
+ 
   function handleOnChange({ target }) {
     const { name, value } = target;
     setAuth((a) => ({ ...a, [name]: value }));
@@ -40,8 +37,7 @@ export default function Login() {
     const res = await login.mutateAsync(auth);
 
     if (res.ok) {
-      setToken(res.data.token);
-      setUser(res.data.user);
+      login.setSession(res.data.token, res.data.user);
       push("/home");
     }
   }

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Btn from "../../Elements/Btn";
 import useCurrentUser from "../../Hooks/useCurrentUser";
 import useBody from "../../Hooks/useBody";
-import notFoundBg from "../../../Images/404.jpg";
 import css from "./NotFound.module.scss";
 
 export default function NotFound() {
@@ -12,8 +11,6 @@ export default function NotFound() {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: `linear-gradient(140deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.85)), url("${notFoundBg}")`,
-    backgroundSize: "cover",
     height: "100vh",
   });
 

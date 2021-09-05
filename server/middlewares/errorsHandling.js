@@ -32,25 +32,14 @@ function clientErrorHandling(err, req, res, next) {
   next(err);
 }
 
-function errorHandling(err, req, res, next) {
-  const { statusCode, payload } = err.output;
-  res.status(statusCode);
-  res.render("error", payload);
-}
-
 function wrapServerErrors(app) {
   if (typeof app.use !== "function") {
     throw new Error("The `app` param isn't a instace of express ");
   }
-  app.use((req, res, next) => {
-    res.status(404).json({ status: 404, data: "Not Found" });
-    next();
-  });
   // insertar los middlewares de errores en el servidor `app`
   app.use(logErrors);
   app.use(wrapErrors);
   app.use(clientErrorHandling);
-  app.use(errorHandling);
 }
 
 module.exports = wrapServerErrors;

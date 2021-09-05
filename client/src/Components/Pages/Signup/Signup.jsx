@@ -21,7 +21,12 @@ const cssBody = {
 export default function Signup() {
   useBody(cssBody);
   const [isValidCaptcha, setIsValidCaptcha] = useState(false);
-  const [auth, setAuth] = useState({ email: "", password: "", name: "" });
+  const [auth, setAuth] = useState({
+    email: "",
+    password: "",
+    passwordConfirm: "",
+    name: "",
+  });
   const captchaRef = useRef(null);
   const login = useAuth();
   const { push } = useHistory();
@@ -89,6 +94,18 @@ export default function Signup() {
             id="password"
             placeholder="Password"
             value={auth.password}
+            onChange={handleOnChange}
+            required
+          />
+        </div>
+        <div className="group">
+          <BiKey className="groupIcon" />
+          <input
+            type="password"
+            name="passwordConfirm"
+            id="passwordConfirm"
+            placeholder="Password Confirm"
+            value={auth.passwordConfirm}
             onChange={handleOnChange}
             required
           />

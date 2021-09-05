@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const existsToken = require("../middlewares/existsToken");
-const authRouters = require("./auth");
-const userRouters = require("./user");
 
-router.use("/auth", authRouters);
+// sub-routers
+const userRouters = require("./user");
+const authRouters = require("./auth");
+
 router.use("/user", existsToken, userRouters);
+router.use("/auth", authRouters);
 
 module.exports = router;

@@ -1,19 +1,24 @@
 const express = require("express");
 const router = express.Router();
-const { getTokenInfo } = require("../../helpers/utils");
-const UserController = require("../../controllers/userController");
-const { success } = require("../../helpers/httpResponses");
+const userController = require("../../controllers/userController");
+const validate = require("../../helpers/validations/validate");
+const {
+  perfilPhotoSchemaValidation,
+  passwordChangeValidation,
+} = require("../../helpers/validations/validations");
 
-router.get("/user", async (req, res, next) => {
-  try {
-    const user = getTokenInfo(req.token).payload;
-    const userFromDb = await UserController.getUserById(user._id);
-    delete userFromDb.password;
-    delete userFromDb.__v;
-    success(res, userFromDb);
-  } catch (err) {
-    next(err);
-  }
-});
+router.post(
+  "/perfil-photo",
+  validate(perfilPhotoSchemaValidation),
+  userController.perfilPhoto
+);
+
+router.patch(
+  "/password",
+  validate(passwordChangeValidation),
+  userController.password
+);
+
+router.get("/user", userController.getInfo);
 
 module.exports = router;

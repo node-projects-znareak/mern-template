@@ -1,40 +1,31 @@
 const chalk = require("chalk");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { SECRET_TOKEN, SALT_BCRYPT } = require("../config/variables").SERVER.API;
+const { SERVER } = require("../config/variables");
 const message = {
   success(str) {
     console.log(chalk.greenBright(`[✔️] ${str}`) + "\n");
   },
 
   error(str, err = null) {
-    console.log(chalk.redBright(`[❌] ${str}`) + "\n");
-    err && console.log(chalk.redBright(`[❌] Error message: ${err}`) + "\n");
+    console.error(chalk.redBright(`[❌] ${str}`) + "\n");
+    err && console.error(chalk.redBright(`[❌] Error message: ${err}`) + "\n");
   },
 
   warn(str) {
-    console.log(chalk.yellowBright(`[⚠️] ${str}`) + "\n");
+    console.warn(chalk.yellowBright(`[⚠️] ${str}`) + "\n");
   },
 };
 
-function isRequestAjaxOrApi(req) {
-  return (
-    !req.accepts("text/html") ||
-    req.xhr ||
-    req.accepts("application/json") ||
-    req.accepts("text/plain")
-  );
-}
-
 function getTokenInfo(token) {
-  return jwt.verify(token, SECRET_TOKEN, (err, payload) => ({
+  return jwt.verify(token, SERVER.API.SECRET_TOKEN, (err, payload) => ({
     isValid: !err,
     payload,
   }));
 }
 
 function hashPassword(password) {
-  const salt = bcrypt.genSaltSync(SALT_BCRYPT);
+  const salt = bcrypt.genSaltSync(parseInt(SERVER.API.SALT_BCRYPT));
   const hash = bcrypt.hashSync(password, salt);
   return hash;
 }
@@ -45,12 +36,13 @@ function isInvalidPassword(hashedPassword, password) {
 }
 
 function getTokenFromPayload(payload) {
-  const token = jwt.sign({ ...payload }, SECRET_TOKEN, { expiresIn: "1d" });
+  const token = jwt.sign({ ...payload }, SERVER.API.SECRET_TOKEN, {
+    expiresIn: "2d",
+  });
   return token;
 }
 
 module.exports = {
-  isRequestAjaxOrApi,
   message,
   getTokenInfo,
   hashPassword,

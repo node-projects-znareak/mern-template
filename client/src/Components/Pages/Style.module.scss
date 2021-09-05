@@ -9,11 +9,16 @@
     color: #fff;
   }
 
+  > h2{
+    text-align: center;
+  }
+
   .lead {
     font-size: 90%;
     color: rgb(189, 189, 189);
     display: block;
     margin: 1rem 0;
+    text-align: center;
   }
 }
 

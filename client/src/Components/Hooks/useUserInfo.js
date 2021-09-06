@@ -1,32 +1,26 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
-import { getUserInfo } from "../../Helpers/api";
-import { existsToken, removeToken } from "../../Helpers/token";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
-
-const default_state = null;
+import { getUserInfo } from "../../Helpers/api";
+import { existsToken } from "../../Helpers/token";
+import useCurrentUser from "./useCurrentUser";
 
 export default function useUserInfo() {
-  const { data, isError, isLoading } = useQuery("userInfo", getUserInfo, {
+  const { user, setUser, logout } = useCurrentUser();
+  const { data, isError, ...args } = useQuery("user", getUserInfo, {
     enabled: existsToken(),
   });
-  const [user, setUser] = useState(default_state);
-
-  const logout = useCallback(() => {
-    setUser(default_state);
-    removeToken();
-  }, []);
-
-  const value = useMemo(() => {
-    return { user, logout, isLoading, setUser };
-  }, [user, logout, isLoading, setUser]);
 
   useEffect(() => {
-    if (!isError && data) {
-      setUser((userState) => ({ ...data, ...userState }));
-    } else if (isError) {
-      removeToken();
+    // It check if there isn't errors, if the token exists, if the user data isn't
+    // an empty object and not to override the current user object data
+    if (existsToken()) {
+      if (!isError && data && !user) {
+        setUser(data);
+      } else if (isError) {
+        logout();
+      }
     }
-  }, [data, isError]);
+  }, [data, isError, setUser, logout, user]);
 
-  return value;
-}
+  return { user: data, isError, ...args };
+} 

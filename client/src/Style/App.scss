@@ -9,13 +9,7 @@
   font-family: "Roboto", Arial, sans-serif;
   text-rendering: optimizeLegibility;
   text-decoration: none;
-  color: #fff;
-}
-
-$img-radius: 4px;
-
-body {
-  background: #161822;
+  color: rgba(0, 0, 0, 0.788);
 }
 
 button:disabled {
@@ -29,8 +23,14 @@ input {
   background: transparent !important;
   padding: 0.8rem;
   padding-left: 2rem;
-  border: 1px solid #252733;
-  border-radius: 5px;
+  border: 1px solid rgb(212, 212, 212);
+  border-radius: 8px;
+  outline: none;
+
+  &:focus {
+    border-color: #1687a7;
+    box-shadow: 0 0 0 0.15rem #1688a763;
+  }
 }
 
 .group {
@@ -53,12 +53,15 @@ input {
   width: 100%;
   padding: 0.8rem;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 8px;
   border: 0;
   background: #1687a7;
   font-weight: bold;
-  letter-spacing: 1px;
   color: #fff;
+
+  span {
+    color: #fff;
+  }
 
   &:focus {
     outline: none;
@@ -73,7 +76,6 @@ input {
   left: 0;
   top: 0;
   z-index: 99999;
-  background: #161822;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,21 +1,16 @@
 .container {
-  background: #161822;
   width: 100%;
   max-width: 400px;
   border-radius: 8px;
   padding: 3.8rem 2.8rem;
 
-  * {
-    color: #fff;
-  }
-
-  > h2{
+  > h2 {
     text-align: center;
   }
 
   .lead {
     font-size: 90%;
-    color: rgb(189, 189, 189);
+    color: rgb(136, 136, 136);
     display: block;
     margin: 1rem 0;
     text-align: center;
@@ -26,8 +21,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
-  span {
+  color: #fff;
+  
+  svg + span {
     margin-right: 10px;
   }
 

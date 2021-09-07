@@ -1,15 +1,19 @@
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+
 export function getToken() {
-  return localStorage.getItem("token");
+  return cookies.get("token");
 }
 
 export function existsToken() {
-  return getToken() !== null;
+  return getToken() !== undefined;
 }
 
 export function setToken(token) {
-  localStorage.setItem("token", token);
+  cookies.set("token", token, { httpOnly: true, secure: true });
 }
 
 export function removeToken() {
-  localStorage.removeItem("token");
+  cookies.remove("token");
 }

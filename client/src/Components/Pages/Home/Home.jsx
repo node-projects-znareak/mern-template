@@ -10,7 +10,6 @@ export default function Home() {
     <div className={css.container}>
       <h2>Bivenido {user.name}</h2>
       <h3>Tu rol es {user.isAdmin ? "administrador" : "usuario"}</h3>
-      <hr />
       <br />
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem

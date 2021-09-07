@@ -10,10 +10,6 @@ export function existsToken() {
   return getToken() !== undefined;
 }
 
-export function setToken(token) {
-  cookies.set("token", token, { httpOnly: true, secure: true });
-}
-
 export function removeToken() {
   cookies.remove("token");
 }

@@ -2,7 +2,6 @@ import useBody from "../../Hooks/useBody";
 import css from "../Style.module.scss";
 import useAuth from "../../Hooks/useAuth";
 import useCurrentUser from "../../Hooks/useCurrentUser";
-
 import Btn from "../../Elements/Btn";
 import ErrorText from "../../Elements/ErrorText";
 import Captcha from "../../Captcha";
@@ -11,7 +10,6 @@ import { useHistory, Link } from "react-router-dom";
 import { useState, useRef } from "react";
 import Loader from "react-loader-spinner";
 import { BiEnvelope, BiKey } from "react-icons/bi";
-import { setToken } from "../../../Helpers/token";
 
 const cssBody = {
   height: "100vh",
@@ -41,18 +39,14 @@ export default function Login() {
 
     const res = await login.mutateAsync(auth);
     if (res.ok) {
-      setToken(res.data.token);
       setUser(res.data.user);
       push("/home");
     }
   }
 
   function handleChangeCaptcha() {
-    if (captchaRef.current.getValue()) {
-      setIsValidCaptcha(true);
-    } else {
-      setIsValidCaptcha(false);
-    }
+    if (captchaRef.current.getValue()) return setIsValidCaptcha(true);
+    setIsValidCaptcha(false);
   }
 
   function handleExpireCaptcha() {
@@ -92,10 +86,7 @@ export default function Login() {
             required
           />
         </div>
-        <ErrorText
-          isVisible={login.isError}
-          text="Ocurrió un error, verifica tus datos."
-        />
+        <ErrorText isVisible={login.isError} text={login} />
 
         <div className="group">
           <Captcha

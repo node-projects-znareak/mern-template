@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { removeToken } from "../../Helpers/token";
+import Cookies from "universal-cookie";
 
 import UserContext from "./UserContext";
 import { useQueryClient } from "react-query";
@@ -13,10 +14,12 @@ export default function UserProvider({ children }) {
     []
   );
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    const cookies = new Cookies();
     removeToken();
     setUserInfo(null);
-    logoutUser();
+    await logoutUser();
+    cookies.remove("token");
     queryClient.invalidateQueries("user");
     queryClient.removeQueries();
   }, [queryClient]);

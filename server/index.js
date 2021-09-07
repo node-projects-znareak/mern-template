@@ -33,15 +33,7 @@ app.use(helmet());
 app.use(hpp());
 
 app.use(rateLimit(SERVER.API.RATE_LIMITS));
-app.use(
-  cookieParser(SERVER.API.SECRET_TOKEN_COOKIE, {
-    httpOnly: true,
-    secure: true,
-    expires: new Date(
-      Date.now() + SERVER.API.COOKIE_EXPIRE_DAYS * 24 * 3600 * 1000
-    ),
-  })
-);
+app.use(cookieParser(SERVER.API.SECRET_TOKEN_COOKIE));
 app.use(
   session({
     secret: SERVER.API.SECRET_TOKEN_SESSION,

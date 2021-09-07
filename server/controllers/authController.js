@@ -1,4 +1,5 @@
-const { NODE_ENV } = require("../config/variables").SERVER.API;
+const { IS_PRODUCTION, COOKIE_EXPIRE_DAYS } = require("../config/variables")
+  .SERVER.API;
 const UserService = require("../services/userService");
 const { unauthorized, success, error } = require("../helpers/httpResponses");
 const {
@@ -18,7 +19,12 @@ class AuthController {
 
         delete user.password;
         const token = getTokenFromPayload(user);
-        res.cookie("token", token);
+        res.cookie("token", token, {
+          httpOnly: IS_PRODUCTION,
+          secure: IS_PRODUCTION,
+          sameSite: IS_PRODUCTION ? "none" : "lax",
+          expires: new Date(Date.now() + COOKIE_EXPIRE_DAYS * 24 * 3600 * 1000),
+        });
         return success(res, { user, token });
       }
       unauthorized(res, "Usuario o clave incorrecta");

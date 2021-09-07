@@ -1,7 +1,9 @@
 import { useState, useCallback } from "react";
 import { removeToken } from "../../Helpers/token";
+
 import UserContext from "./UserContext";
 import { useQueryClient } from "react-query";
+import { logoutUser } from "../../Helpers/api";
 
 export default function UserProvider({ children }) {
   const queryClient = useQueryClient();
@@ -14,6 +16,7 @@ export default function UserProvider({ children }) {
   const logout = useCallback(() => {
     removeToken();
     setUserInfo(null);
+    logoutUser();
     queryClient.invalidateQueries("user");
     queryClient.removeQueries();
   }, [queryClient]);

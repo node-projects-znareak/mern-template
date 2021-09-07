@@ -1,9 +1,10 @@
-import { api, login, signup, token, userInfo } from "../config/config";
+import { api, login, logout, signup, userInfo } from "../config/config";
 import { getToken } from "./token";
 import axios from "axios";
 
 const instance = axios.create({
   baseURL: api,
+  withCredentials: true, // important for the CORS errors
 });
 
 const config = () => ({
@@ -22,13 +23,13 @@ export async function signupUser(payload) {
   return data?.data;
 }
 
-export async function verifyToken() {
-  const data = await instance.get(token, config());
-  return Boolean(data?.data?.ok);
-}
-
 export async function getUserInfo() {
   if (!getToken()) return null;
   const res = await instance.get(userInfo, config());
+  return res?.data?.data;
+}
+
+export async function logoutUser() {
+  const res = await instance.get(logout, config());
   return res?.data?.data;
 }

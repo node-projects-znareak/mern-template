@@ -23,4 +23,4 @@ export default function useUserInfo() {
   }, [data, isError, setUser, logout, user]);
 
   return { user: data, isError, ...args };
-} 
+}

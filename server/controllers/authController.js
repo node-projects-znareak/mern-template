@@ -1,4 +1,4 @@
-const { NODE_ENV } = require("../config/variables").SERVER.API;
+const { IS_PRODUCTION } = require("../config/variables").SERVER.API;
 const UserService = require("../services/userService");
 const { unauthorized, success, error } = require("../helpers/httpResponses");
 const {
@@ -18,7 +18,7 @@ class AuthController {
 
         delete user.password;
         const token = getTokenFromPayload(user);
-        res.cookie("token", token, { httpOnly: false, secure: NODE_ENV });
+        res.cookie("token", token);
         return success(res, { user, token });
       }
       unauthorized(res, "Usuario o clave incorrecta");
@@ -47,8 +47,13 @@ class AuthController {
   }
 
   logout(req, res, next) {
-    res.clearCookie("token");
-    success(res, "El usuario se deslogueo correctamente");
+    try {
+      const user = req.user.name;
+      res.clearCookie("token");
+      success(res, `El usuario ${user} se deslogueo correctamente`);
+    } catch (err) {
+      next(err);
+    }
   }
 }
 

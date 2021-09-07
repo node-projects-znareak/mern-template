@@ -1,4 +1,4 @@
-const { IS_PRODUCTION } = require("../config/variables").SERVER.API;
+const { NODE_ENV } = require("../config/variables").SERVER.API;
 const UserService = require("../services/userService");
 const { unauthorized, success, error } = require("../helpers/httpResponses");
 const {

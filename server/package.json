@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "dev": "node index.js"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.4",

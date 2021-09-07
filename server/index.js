@@ -17,7 +17,6 @@ app.use(
   cors({
     credentials: true,
     origin(origin, cb) {
-      console.log(SERVER.API.ALLOWED_DOMAINS.includes(origin));
       if (SERVER.API.ALLOWED_DOMAINS.includes(origin)) {
         return cb(null, true);
       }
@@ -36,9 +35,11 @@ app.use(hpp());
 app.use(rateLimit(SERVER.API.RATE_LIMITS));
 app.use(
   cookieParser(SERVER.API.SECRET_TOKEN_COOKIE, {
-    httpOnly: false,
-    secure: SERVER.API.IS_PRODUCTION,
-    expires: SERVER.API.COOKIE_EXPIRE_DAYS * 24 * 3600 * 1000,
+    httpOnly: true,
+    secure: true,
+    expires: new Date(
+      Date.now() + SERVER.API.COOKIE_EXPIRE_DAYS * 24 * 3600 * 1000
+    ),
   })
 );
 app.use(

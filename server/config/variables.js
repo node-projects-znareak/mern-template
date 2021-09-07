@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const env = process.env;
 const MONGO_DB = {
-  URL: env.MONGODB_URL + env.MONGO_DB,
+  URL: env.MONGODB_URL,
 };
 
 const SERVER = {

@@ -1,6 +1,7 @@
 import useBody from "../../Hooks/useBody";
 import css from "../Style.module.scss";
-import useAuth from "../../Hooks/useAuth";
+import useLogin from "../../Hooks/useLogin";
+import useCurrentUser from "../../Hooks/useCurrentUser";
 import Btn from "../../Elements/Btn";
 import ErrorText from "../../Elements/ErrorText";
 import Captcha from "../../Captcha";
@@ -19,12 +20,14 @@ const cssBody = {
 
 export default function Login() {
   useBody(cssBody);
+  const { setUser } = useCurrentUser();
+
   const [isValidCaptcha, setIsValidCaptcha] = useState(false);
   const [auth, setAuth] = useState({ email: "", password: "" });
   const captchaRef = useRef(null);
-  const login = useAuth();
+  const login = useLogin();
   const { push } = useHistory();
- 
+
   function handleOnChange({ target }) {
     const { name, value } = target;
     setAuth((a) => ({ ...a, [name]: value }));
@@ -35,19 +38,15 @@ export default function Login() {
     if (!isValidCaptcha) return;
 
     const res = await login.mutateAsync(auth);
-
     if (res.ok) {
-      login.setSession(res.data.token, res.data.user);
+      setUser(res.data.user);
       push("/home");
     }
   }
 
   function handleChangeCaptcha() {
-    if (captchaRef.current.getValue()) {
-      setIsValidCaptcha(true);
-    } else {
-      setIsValidCaptcha(false);
-    }
+    if (captchaRef.current.getValue()) return setIsValidCaptcha(true);
+    setIsValidCaptcha(false);
   }
 
   function handleExpireCaptcha() {
@@ -87,10 +86,7 @@ export default function Login() {
             required
           />
         </div>
-        <ErrorText
-          isVisible={login.isError}
-          text="Ocurrió un error, verifica tus datos."
-        />
+        <ErrorText isVisible={login.isError} text={login} />
 
         <div className="group">
           <Captcha

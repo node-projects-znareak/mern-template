@@ -11,7 +11,8 @@
       "src": "/(.*)",
       "dest": "/",
       "headers": {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin": "https://mern-template-ruddy.vercel.app",
         "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
       }
     }

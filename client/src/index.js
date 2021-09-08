@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Routers from "./Components/Routers";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 // import { ReactQueryDevtools } from "react-query/devtools";
 

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Loader from "./Loaders/loader";
+import LoaderPage from "./Loaders/LoaderPage";
 
 export function LazyComponent({
   component: Component,
@@ -12,6 +12,6 @@ export function LazyComponent({
   );
 }
 
-export default function Async(component, loader = <Loader />) {
+export default function Async(component, loader = <LoaderPage />) {
   return () => <LazyComponent component={component} loader={loader} />;
 }

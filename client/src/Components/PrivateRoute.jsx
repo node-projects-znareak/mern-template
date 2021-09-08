@@ -1,6 +1,6 @@
 import { Route, Redirect } from "react-router-dom";
 import { existsToken } from "../Helpers/token";
-import LoaderPage from "./Loaders/loader";
+import LoaderPage from "./Loaders/LoaderPage";
 import useUserInfo from "./Hooks/useUserInfo";
 
 export default function PrivateRoute({ component: Component, ...rest }) {

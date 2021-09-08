@@ -3,12 +3,11 @@ import css from "../Style.module.scss";
 import { useState, useRef } from "react";
 import Loader from "react-loader-spinner";
 import { BiUser, BiEnvelope, BiKey } from "react-icons/bi";
-import useAuth from "../../Hooks/useAuth";
+import useSignup from "../../Hooks/useSignup";
 import { useHistory, Link } from "react-router-dom";
 import Btn from "../../Elements/Btn";
 import ErrorText from "../../Elements/ErrorText";
 import Captcha from "../../Captcha";
-import { signupUser } from "../../../Helpers/api";
 
 const cssBody = {
   backgroundSize: "cover",
@@ -28,7 +27,7 @@ export default function Signup() {
     name: "",
   });
   const captchaRef = useRef(null);
-  const login = useAuth();
+  const signup = useSignup();
   const { push } = useHistory();
 
   function handleOnChange({ target }) {
@@ -40,16 +39,13 @@ export default function Signup() {
     e.preventDefault();
     if (!isValidCaptcha) return;
 
-    const res = await signupUser(auth);
+    const res = await signup.mutateAsync(auth);
     if (res.ok) push("/");
   }
 
   function handleChangeCaptcha() {
-    if (captchaRef.current.getValue()) {
-      setIsValidCaptcha(true);
-    } else {
-      setIsValidCaptcha(false);
-    }
+    if (captchaRef.current.getValue()) return setIsValidCaptcha(true);
+    setIsValidCaptcha(false);
   }
 
   function handleExpireCaptcha() {
@@ -110,13 +106,11 @@ export default function Signup() {
             required
           />
         </div>
-        <small className={css.lead}>
-          La clave sólo debe tener letras mayúsculas, minúsculas y un número
+        <small className={css.lead} style={{ fontSize: "80%" }}>
+          La clave debe tener letras mayúsculas, minúsculas y un número
         </small>
-        <ErrorText
-          isVisible={login.isError}
-          text="Ocurrió un error, verifica tus datos."
-        />
+
+        <ErrorText isVisible={signup.isError} text={signup} />
 
         <div className="group">
           <Captcha
@@ -127,10 +121,10 @@ export default function Signup() {
         </div>
 
         <div className="group">
-          <Btn type="submit" disabled={login.isLoading || !isValidCaptcha}>
+          <Btn type="submit" disabled={signup.isLoading || !isValidCaptcha}>
             <div className={css.buttonContent}>
               <span>Registrarse</span>
-              {login.isLoading && (
+              {signup.isLoading && (
                 <Loader height={20} width={20} color="#fff" type="Oval" />
               )}
             </div>

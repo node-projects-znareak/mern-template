@@ -1,20 +1,19 @@
 require("dotenv").config();
 
-const env = process.env;
 const MONGO_DB = {
-  URL: env.MONGODB_URL,
+  URL: process.env.MONGODB_URL,
 };
 
 const SERVER = {
-  PORT: env.API_PORT || 6000,
-  DEV: env.DEV || false,
+  PORT: process.env.API_PORT || 6000,
+  DEV: process.env.DEV || false,
   API: {
     COOKIE_EXPIRE_DAYS: 2,
-    SALT_BCRYPT: env.SALT_BCRYPT,
-    SECRET_TOKEN: env.SECRET_TOKEN,
-    SECRET_TOKEN_SESSION: env.SECRET_TOKEN_SESSION,
-    SECRET_TOKEN_COOKIE: env.SECRET_TOKEN_COOKIE,
-    IS_PRODUCTION: env.NODE_ENV === "production",
+    SALT_BCRYPT: process.env.SALT_BCRYPT,
+    SECRET_TOKEN: process.env.SECRET_TOKEN,
+    SECRET_TOKEN_SESSION: process.env.SECRET_TOKEN_SESSION,
+    SECRET_TOKEN_COOKIE: process.env.SECRET_TOKEN_COOKIE,
+    IS_PRODUCTION: process.env.NODE_ENV === "production",
     ALLOWED_DOMAINS: [
       "http://127.0.0.1:3000",
       "http://localhost:3000",

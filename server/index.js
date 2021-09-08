@@ -5,7 +5,6 @@ const helmet = require("helmet");
 const hpp = require("hpp");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
-const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
 const app = express();
@@ -15,6 +14,7 @@ const startServer = require("./config/server");
 
 app.use(
   cors({
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
     credentials: true,
     origin(origin, cb) {
       if (SERVER.API.ALLOWED_DOMAINS.includes(origin)) {
@@ -28,19 +28,12 @@ app.use(morgan("dev"));
 app.use(express.static("./uploads"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(fileUpload());
 app.use(helmet());
 app.use(hpp());
-
 app.use(rateLimit(SERVER.API.RATE_LIMITS));
-app.use(cookieParser(SERVER.API.SECRET_TOKEN_COOKIE));
-app.use(
-  session({
-    secret: SERVER.API.SECRET_TOKEN_SESSION,
-    resave: false,
-    saveUninitialized: true,
-  })
-);
+
 app.use("/api", routers);
 
 startServer(app, routers);

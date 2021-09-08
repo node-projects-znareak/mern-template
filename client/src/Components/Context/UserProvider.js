@@ -14,11 +14,14 @@ export default function UserProvider({ children }) {
   );
 
   const logout = useCallback(async () => {
-    await logoutUser();
-    removeToken();
-    setUserInfo(null);
-    queryClient.invalidateQueries("user");
-    queryClient.removeQueries();
+    try {
+      await logoutUser();
+    } finally {
+      removeToken();
+      setUserInfo(null);
+      queryClient.invalidateQueries("user");
+      queryClient.removeQueries();
+    }
   }, [queryClient]);
 
   const value = {

@@ -1,16 +1,12 @@
 import { api, login, logout, signup, userInfo } from "../config/config";
 import { getToken } from "./token";
 import axios from "axios";
+axios.defaults.withCredentials = true;
 
 const instance = axios.create({
   baseURL: api,
-  withCredentials: true, // important for the CORS errors
-});
-
-const config = () => ({
-  headers: {
-    Authorization: "Bearer " + getToken(),
-  },
+  crossDomain: true,
+  withCredentials: true,
 });
 
 export async function setLogin(auth) {
@@ -25,11 +21,11 @@ export async function signupUser(payload) {
 
 export async function getUserInfo() {
   if (!getToken()) return null;
-  const res = await instance.get(userInfo, config());
+  const res = await instance.get(userInfo);
   return res?.data?.data;
 }
 
 export async function logoutUser() {
-  const res = await instance.get(logout, config());
+  const res = await instance.get(logout);
   return res?.data?.data;
 }

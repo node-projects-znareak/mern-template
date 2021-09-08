@@ -53,13 +53,8 @@ class AuthController {
   }
 
   logout(req, res, next) {
-    try {
-      const user = req.user.name;
-      res.clearCookie("token");
-      success(res, `El usuario ${user} se deslogueo correctamente`);
-    } catch (err) {
-      next(err);
-    }
+    res.clearCookie("token");
+    success(res, `El usuario se deslogueo correctamente`);
   }
 }
 

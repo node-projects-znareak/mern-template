@@ -10,6 +10,7 @@ import { useHistory, Link } from "react-router-dom";
 import { useState, useRef } from "react";
 import Loader from "react-loader-spinner";
 import { BiEnvelope, BiKey } from "react-icons/bi";
+import { setToken } from "../../../Helpers/token";
 
 const cssBody = {
   height: "100vh",
@@ -40,6 +41,7 @@ export default function Login() {
     const res = await login.mutateAsync(auth);
     if (res.ok) {
       setUser(res.data.user);
+      setToken(res.data.token);
       push("/home");
     }
   }

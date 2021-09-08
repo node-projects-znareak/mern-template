@@ -1,4 +1,4 @@
-export const api = "http://localhost:5000/api/";
+export const api = "https://mern-template-api.vercel.app/api/";
 export const login = "/auth/login";
 export const signup = "/auth/signup";
 export const token = "/auth/verify-token";

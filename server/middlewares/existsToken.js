@@ -1,6 +1,6 @@
-const { invalidToken, error } = require("../helpers/httpResponses");
+const { invalidToken, unauthorized } = require("../helpers/httpResponses");
 const { getTokenInfo } = require("../helpers/utils");
- 
+
 function existsToken(req, res, next) {
   const headers = req.headers.authorization;
   if (headers) {
@@ -14,7 +14,7 @@ function existsToken(req, res, next) {
     return invalidToken(res);
   }
 
-  error(res, "The authorization header missing");
+  unauthorized(res, "The authorization header missing");
 }
 
 module.exports = existsToken;

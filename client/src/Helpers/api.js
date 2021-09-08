@@ -18,7 +18,7 @@ instance.interceptors.response.use(
   (err) => {
     if (
       err.response.data.statusCode === 401 &&
-      err.response.config.url !== userInfo
+      err.response.config.url !== userInfo // The private router check this
     ) {
       existsToken() && removeToken();
       window.location.href = "/";

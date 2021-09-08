@@ -1,16 +1,31 @@
-import { api, login, signup, token, userInfo } from "../config/config";
-import { getToken } from "./token";
+import { api, login, signup, userInfo } from "../config/config";
+import { getToken, removeToken, existsToken } from "./token";
 import axios from "axios";
 
 const instance = axios.create({
   baseURL: api,
 });
 
-const config = () => ({
-  headers: {
-    Authorization: "Bearer " + getToken(),
-  },
+instance.interceptors.request.use((req) => {
+  if (existsToken()) {
+    req.headers.authorization = "Bearer " + getToken();
+  }
+  return req;
 });
+
+instance.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (
+      err.response.data.statusCode === 401 &&
+      err.response.config.url !== userInfo
+    ) {
+      existsToken() && removeToken();
+      window.location.href = "/";
+    }
+    return Promise.reject(err);
+  }
+);
 
 export async function setLogin(auth) {
   const data = await instance.post(login, auth);
@@ -22,13 +37,12 @@ export async function signupUser(payload) {
   return data?.data;
 }
 
-export async function verifyToken() {
-  const data = await instance.get(token, config());
-  return Boolean(data?.data?.ok);
+export async function getUserInfo() {
+  const res = await instance.get(userInfo);
+  return res?.data?.data;
 }
 
-export async function getUserInfo() {
-  if (!getToken()) return null;
-  const res = await instance.get(userInfo, config());
+export async function testApi() {
+  const res = await instance.get("/test");
   return res?.data?.data;
 }

@@ -13,13 +13,13 @@ class AuthController {
       const user = await UserService.existsUser(email);
       if (user) {
         if (isInvalidPassword(password, user.password))
-          return unauthorized(res, "Usuario o clave incorrecta");
+          return error(res, "Usuario o clave incorrecta");
 
         delete user.password;
         const token = getTokenFromPayload(user);
         return success(res, { user, token });
       }
-      unauthorized(res, "Usuario o clave incorrecta");
+      error(res, "Usuario o clave incorrecta");
     } catch (err) {
       next(err);
     }

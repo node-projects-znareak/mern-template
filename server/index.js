@@ -31,6 +31,5 @@ app.use(fileUpload());
 app.use(helmet());
 app.use(hpp());
 app.use(rateLimit(SERVER.API.RATE_LIMITS));
-app.use("/api", routers);
 
 startServer(app, routers);

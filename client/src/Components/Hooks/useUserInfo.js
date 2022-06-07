@@ -15,6 +15,8 @@ export default function useUserInfo() {
     // an empty object and not to override the current user object data
     if (isValidToken()) {
       if (!isError && data && !user) {
+        /*The user's context is important firstly update it remotecatly 
+          and after to update locatly it in the context */
         setUser(data);
       } else if (isError) {
         logout();

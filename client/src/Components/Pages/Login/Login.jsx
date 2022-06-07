@@ -5,7 +5,7 @@ import useCurrentUser from "../../Hooks/useCurrentUser";
 import Btn from "../../Elements/Btn";
 import ErrorText from "../../Elements/ErrorText";
 import Captcha from "../../Captcha";
-
+import useCaptcha from "../../Hooks/useCaptcha";
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useRef } from "react";
 import { Oval } from "react-loader-spinner";
@@ -21,13 +21,13 @@ const cssBody = {
 
 export default function Login() {
   useBody(cssBody);
-  const { setUser } = useCurrentUser();
 
-  const [isValidCaptcha, setIsValidCaptcha] = useState(false);
-  const [auth, setAuth] = useState({ email: "", password: "" });
   const captchaRef = useRef(null);
   const login = useLogin();
   const navigate = useNavigate();
+  const { setUser } = useCurrentUser();
+  const { isValidCaptcha, handleChangeCaptcha, handleExpireCaptcha } =useCaptcha(captchaRef);
+  const [auth, setAuth] = useState({ email: "", password: "" });
 
   function handleOnChange({ target }) {
     const { name, value } = target;
@@ -44,15 +44,6 @@ export default function Login() {
       setToken(res.data.token);
       navigate("/home", { replace: true });
     }
-  }
-
-  function handleChangeCaptcha() {
-    if (captchaRef.current.getValue()) return setIsValidCaptcha(true);
-    setIsValidCaptcha(false);
-  }
-
-  function handleExpireCaptcha() {
-    setIsValidCaptcha(false);
   }
 
   return (

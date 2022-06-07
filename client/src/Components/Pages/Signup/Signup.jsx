@@ -1,13 +1,14 @@
 import useBody from "../../Hooks/useBody";
 import css from "../Style.module.scss";
-import { useState, useRef } from "react";
-import {Oval} from "react-loader-spinner";
-import { BiUser, BiEnvelope, BiKey } from "react-icons/bi";
 import useSignup from "../../Hooks/useSignup";
-import { useNavigate, Link } from "react-router-dom";
 import Btn from "../../Elements/Btn";
 import ErrorText from "../../Elements/ErrorText";
 import Captcha from "../../Captcha";
+import useCaptcha from "../../Hooks/useCaptcha";
+import { Oval } from "react-loader-spinner";
+import { useState, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { BiUser, BiEnvelope, BiKey } from "react-icons/bi";
 
 const cssBody = {
   backgroundSize: "cover",
@@ -19,17 +20,17 @@ const cssBody = {
 
 export default function Signup() {
   useBody(cssBody);
-  const [isValidCaptcha, setIsValidCaptcha] = useState(false);
+  const captchaRef = useRef(null);
+  const signup = useSignup();
+  const navigate = useNavigate();
+  const { isValidCaptcha, handleChangeCaptcha, handleExpireCaptcha } = useCaptcha(captchaRef);
   const [auth, setAuth] = useState({
     email: "",
     password: "",
     passwordConfirm: "",
     name: "",
   });
-  const captchaRef = useRef(null);
-  const signup = useSignup();
-  const navigate = useNavigate();
-
+  
   function handleOnChange({ target }) {
     const { name, value } = target;
     setAuth((a) => ({ ...a, [name]: value }));
@@ -40,16 +41,9 @@ export default function Signup() {
     if (!isValidCaptcha) return;
 
     const res = await signup.mutateAsync(auth);
-    if (res.ok) navigate("/", { replace: true });
-  }
-
-  function handleChangeCaptcha() {
-    if (captchaRef.current.getValue()) return setIsValidCaptcha(true);
-    setIsValidCaptcha(false);
-  }
-
-  function handleExpireCaptcha() {
-    setIsValidCaptcha(false);
+    if (res.ok) {
+      navigate("/", { replace: true });
+    }
   }
 
   return (

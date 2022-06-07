@@ -1,6 +1,6 @@
 {
   "name": "mern-template",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "[![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)](https://github.com/node-projects-znareak/mern-template)\r [![Twitter: libardo_r12](https://img.shields.io/twitter/follow/libardo_r12.svg?style=social)](https://twitter.com/libardo_r12)",
   "main": "index.js",
   "scripts": {

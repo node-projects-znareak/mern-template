@@ -16,6 +16,8 @@ instance.interceptors.request.use((req) => {
 instance.interceptors.response.use(
   (res) => res,
   (err) => {
+    if (err.code === "ERR_NETWORK") return Promise.reject(err.message);
+
     if (
       err.response.data.statusCode === 401 &&
       err.response.config.url !== userInfo // The private router check this
@@ -23,7 +25,7 @@ instance.interceptors.response.use(
       isValidToken() && removeToken();
       window.location.href = "/";
     }
-    return Promise.reject(err);
+    return Promise.reject(err.message);
   }
 );
 

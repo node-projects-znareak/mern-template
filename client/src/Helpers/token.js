@@ -14,11 +14,11 @@ export function isValidToken() {
   const decoded = jwtDecode(token);
 
   if (Date.now() >= decoded.exp * 1000) {
-    console.log("TOKEN EXPIRADO!");
+    console.log("The user token is expired!");
     removeToken();
     return false;
   }
-  
+
   return true;
 }
 

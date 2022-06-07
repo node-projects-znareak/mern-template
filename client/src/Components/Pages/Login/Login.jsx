@@ -6,9 +6,9 @@ import Btn from "../../Elements/Btn";
 import ErrorText from "../../Elements/ErrorText";
 import Captcha from "../../Captcha";
 
-import { useHistory, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState, useRef } from "react";
-import Loader from "react-loader-spinner";
+import { Oval } from "react-loader-spinner";
 import { BiEnvelope, BiKey } from "react-icons/bi";
 import { setToken } from "../../../Helpers/token";
 
@@ -27,7 +27,7 @@ export default function Login() {
   const [auth, setAuth] = useState({ email: "", password: "" });
   const captchaRef = useRef(null);
   const login = useLogin();
-  const { push } = useHistory();
+  const navigate = useNavigate();
 
   function handleOnChange({ target }) {
     const { name, value } = target;
@@ -42,7 +42,7 @@ export default function Login() {
     if (res.ok) {
       setUser(res.data.user);
       setToken(res.data.token);
-      push("/home");
+      navigate("/home", { replace: true });
     }
   }
 
@@ -62,7 +62,7 @@ export default function Login() {
         Necesitas tener una cuenta para acceder al contenido de esta página.
       </p>
 
-      <form autoComplete="off" onSubmit={handleOnSubmit}>
+      <form onSubmit={handleOnSubmit}>
         <div className="group">
           <BiEnvelope className="groupIcon" />
           <input
@@ -72,6 +72,7 @@ export default function Login() {
             placeholder="Email"
             onChange={handleOnChange}
             value={auth.user}
+            autoComplete="on"
             required
           />
         </div>
@@ -85,6 +86,7 @@ export default function Login() {
             placeholder="Password"
             value={auth.password}
             onChange={handleOnChange}
+            autoComplete="on"
             required
           />
         </div>
@@ -103,7 +105,7 @@ export default function Login() {
             <div className={css.buttonContent}>
               <span>Iniciar</span>
               {login.isLoading && (
-                <Loader height={20} width={20} color="#fff" type="Oval" />
+                <Oval height={20} width={20} color="#fff" visible />
               )}
             </div>
           </Btn>

@@ -9,7 +9,7 @@ const NotFound = lazy(() => import("../Components/Pages/404/404"));
 const routers = [
   privateRoute(Home, "/home"),
   redirectRoute(Signup, "/signup"),
-  redirectRoute(Login, "/"),
+  redirectRoute(Login, "/",),
   route(NotFound),
 ];
 

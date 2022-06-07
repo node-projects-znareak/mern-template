@@ -1,24 +1,23 @@
 import Async from "../Components/LazyComponent";
 
-export const route = (component, path = "*", ...rest) => {
+export const route = (component, path = "*", rest) => {
   return {
-    component: Async(component),
+    element: Async(component),
     path,
     ...rest,
   };
 };
 
-export const privateRoute = (component, path = "/") => {
-  return { component: Async(component), path, exact: true, private: true };
+export const privateRoute = (component, path = "/", props) => {
+  return route(component, path, { private: true, ...props });
 };
 
-export const redirectRoute = (component, path = "/") => {
-  return {
-    component: Async(component),
-    path,
-    exact: true,
-    redirect: true,
-  };
+export const redirectRoute = (component, path = "/", props) => {
+  return route(component, path, { redirect: true, ...props });
+};
+
+export const publicRoute = (component, path = "/", props) => {
+  return route(component, path, { public: true, ...props });
 };
 
 /**

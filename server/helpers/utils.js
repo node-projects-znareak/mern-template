@@ -18,10 +18,12 @@ const message = {
 };
 
 function getTokenInfo(token) {
-  return jwt.verify(token, SERVER.API.SECRET_TOKEN, (err, payload) => ({
-    isValid: !err,
-    payload,
-  }));
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, SERVER.API.SECRET_TOKEN, (err, payload) => {
+      if (err) return reject(new Error(err));
+      resolve(payload);
+    });
+  });
 }
 
 function hashPassword(password) {
@@ -36,10 +38,14 @@ function isInvalidPassword(hashedPassword, password) {
 }
 
 function getTokenFromPayload(payload) {
-  const token = jwt.sign({ ...payload }, SERVER.API.SECRET_TOKEN, {
-    expiresIn: "2d",
+  const token = jwt.sign(payload, SERVER.API.SECRET_TOKEN, {
+    expiresIn: "20s",
   });
   return token;
+}
+  
+function isRequestAjaxOrApi(req) {
+  return !req.accepts("html") || req.xhr;
 }
 
 module.exports = {
@@ -47,5 +53,6 @@ module.exports = {
   getTokenInfo,
   hashPassword,
   isInvalidPassword,
+  isRequestAjaxOrApi,
   getTokenFromPayload,
 };

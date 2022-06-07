@@ -1,5 +1,5 @@
 import { api, login, signup, userInfo } from "../config/config";
-import { getToken, removeToken, existsToken } from "./token";
+import { getToken, removeToken, isValidToken } from "./token";
 import axios from "axios";
 
 const instance = axios.create({
@@ -7,7 +7,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((req) => {
-  if (existsToken()) {
+  if (isValidToken()) {
     req.headers.authorization = "Bearer " + getToken();
   }
   return req;
@@ -20,7 +20,7 @@ instance.interceptors.response.use(
       err.response.data.statusCode === 401 &&
       err.response.config.url !== userInfo // The private router check this
     ) {
-      existsToken() && removeToken();
+      isValidToken() && removeToken();
       window.location.href = "/";
     }
     return Promise.reject(err);

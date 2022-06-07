@@ -7,6 +7,8 @@ const {
   passwordChangeValidation,
 } = require("../../helpers/validations/validations");
 
+router.get("/", userController.getInfo);
+
 router.post(
   "/perfil-photo",
   validate(perfilPhotoSchemaValidation),
@@ -18,7 +20,5 @@ router.patch(
   validate(passwordChangeValidation),
   userController.password
 );
-
-router.get("/user", userController.getInfo);
 
 module.exports = router;

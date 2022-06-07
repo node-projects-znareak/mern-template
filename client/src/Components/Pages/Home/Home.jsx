@@ -2,6 +2,7 @@ import React from "react";
 import Btn from "../../Elements/Btn";
 import css from "../../../Style/Home.module.scss";
 import useCurrentUser from "../../Hooks/useCurrentUser";
+import { Link } from "react-router-dom";
 import { testApi } from "../../../Helpers/api";
 
 export default function Home() {
@@ -45,6 +46,8 @@ export default function Home() {
           Verificar sesión
         </Btn>
       </div>
+
+      <Link to="/here">Ir a una pagina</Link>
     </div>
   );
 }

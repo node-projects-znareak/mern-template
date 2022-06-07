@@ -1,10 +1,10 @@
 import useBody from "../../Hooks/useBody";
 import css from "../Style.module.scss";
 import { useState, useRef } from "react";
-import Loader from "react-loader-spinner";
+import {Oval} from "react-loader-spinner";
 import { BiUser, BiEnvelope, BiKey } from "react-icons/bi";
 import useSignup from "../../Hooks/useSignup";
-import { useHistory, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Btn from "../../Elements/Btn";
 import ErrorText from "../../Elements/ErrorText";
 import Captcha from "../../Captcha";
@@ -28,7 +28,7 @@ export default function Signup() {
   });
   const captchaRef = useRef(null);
   const signup = useSignup();
-  const { push } = useHistory();
+  const navigate = useNavigate();
 
   function handleOnChange({ target }) {
     const { name, value } = target;
@@ -40,7 +40,7 @@ export default function Signup() {
     if (!isValidCaptcha) return;
 
     const res = await signup.mutateAsync(auth);
-    if (res.ok) push("/");
+    if (res.ok) navigate("/", { replace: true });
   }
 
   function handleChangeCaptcha() {
@@ -56,7 +56,7 @@ export default function Signup() {
     <div className={css.container}>
       <h2 style={{ marginBottom: "1rem" }}>Registrate</h2>
 
-      <form autoComplete="off" onSubmit={handleOnSubmit}>
+      <form onSubmit={handleOnSubmit}>
         <div className="group">
           <BiUser className="groupIcon" />
           <input
@@ -66,6 +66,7 @@ export default function Signup() {
             placeholder="Name"
             onChange={handleOnChange}
             value={auth.name}
+            autoComplete="on"
             required
           />
         </div>
@@ -78,6 +79,7 @@ export default function Signup() {
             placeholder="Email"
             onChange={handleOnChange}
             value={auth.user}
+            autoComplete="on"
             required
           />
         </div>
@@ -91,6 +93,7 @@ export default function Signup() {
             placeholder="Password"
             value={auth.password}
             onChange={handleOnChange}
+            autoComplete="on"
             required
           />
         </div>
@@ -125,7 +128,7 @@ export default function Signup() {
             <div className={css.buttonContent}>
               <span>Registrarse</span>
               {signup.isLoading && (
-                <Loader height={20} width={20} color="#fff" type="Oval" />
+                <Oval height={20} width={20} color="#fff" visible />
               )}
             </div>
           </Btn>

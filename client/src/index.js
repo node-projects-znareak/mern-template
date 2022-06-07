@@ -1,13 +1,14 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import Routers from "./Components/Routers";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import UserProvider from "./Components/Context/UserProvider";
 import { QueryClient, QueryClientProvider } from "react-query";
 // import { ReactQueryDevtools } from "react-query/devtools";
 
-import UserProvider from "./Components/Context/UserProvider";
 import "./Style/App.scss";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
+const root = document.getElementById("root");
 const client = new QueryClient({
   defaultOptions: {
     queries: {
@@ -15,12 +16,12 @@ const client = new QueryClient({
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
-      retry: 0,
+      retry: 1,
     },
   },
 });
 
-ReactDOM.render(
+ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <QueryClientProvider client={client}>
       <UserProvider>
@@ -28,6 +29,5 @@ ReactDOM.render(
       </UserProvider>
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );

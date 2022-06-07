@@ -1,23 +1,14 @@
-import { Route, Redirect } from "react-router-dom";
-import { existsToken } from "../Helpers/token";
+import { Navigate, Outlet } from "react-router-dom";
+import { isValidToken } from "../Helpers/token";
 import LoaderPage from "./Loaders/LoaderPage";
 import useUserInfo from "./Hooks/useUserInfo";
 
-export default function RedirectRoute({ component: Component, ...rest }) {
+export default function RedirectRoute() {
   const { user, isLoading } = useUserInfo();
 
   if (isLoading) return <LoaderPage />;
 
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        existsToken() && user ? (
-          <Redirect to="/home" />
-        ) : (
-          <Component {...props} />
-        )
-      }
-    />
-  );
+  if (user && isValidToken()) return <Navigate to="/home" replace />;
+  
+  return <Outlet />;
 }

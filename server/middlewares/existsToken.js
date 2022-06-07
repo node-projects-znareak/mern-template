@@ -1,20 +1,22 @@
 const { invalidToken, unauthorized } = require("../helpers/httpResponses");
 const { getTokenInfo } = require("../helpers/utils");
 
-function existsToken(req, res, next) {
+async function existsToken(req, res, next) {
   const headers = req.headers.authorization;
   if (headers) {
-    const token = headers.split(" ")[1];
-    const tokenInfo = getTokenInfo(token);
-    if (tokenInfo.isValid) {
+    try {
+      const token = headers.split(" ")[1];
+      if (!token) return invalidToken(res);
+      const tokenInfo = await getTokenInfo(token);
       req.token = token;
-      req.user = tokenInfo.payload;
-      return next();
+      req.user = tokenInfo;
+      next();
+    } catch (error) {
+      invalidToken(res);
     }
-    return invalidToken(res);
+  } else {
+    unauthorized(res, "The authorization header missing");
   }
-
-  unauthorized(res, "The authorization header missing");
 }
 
 module.exports = existsToken;

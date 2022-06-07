@@ -1,19 +1,20 @@
 {
-  "name": "galery",
-  "version": "0.1.0",
-  "private": true,
+  "name": "mern-template",
+  "version": "1.1.0",
+  "private": false,
   "dependencies": {
-    "axios": "^0.21.3",
+    "axios": "^0.27.2",
+    "jwt-decode": "^3.1.2",
     "node-cache": "^5.1.2",
-    "node-sass": "^6.0.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "node-sass": "^7.0.1",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "react-google-recaptcha": "^2.1.0",
-    "react-icons": "^4.2.0",
-    "react-loader-spinner": "^4.0.0",
-    "react-query": "^3.21.1",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "4.0.3"
+    "react-icons": "^4.4.0",
+    "react-loader-spinner": "^5.1.4",
+    "react-query": "^3.39.1",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

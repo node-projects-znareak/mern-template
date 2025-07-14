@@ -1,0 +1,17 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API MERN 1.0.0",
+    "version": "1.0.0",
+    "description": "API Core for MERN web app developed by znareak",
+    "license": {
+      "name": "MIT",
+      "url": "https://spdx.org/licenses/MIT.html"
+    },
+    "contact": {
+      "name": "znareak",
+      "url": "https://libardo.es/",
+      "email": "libardojesusrengifo129@gmail.com"
+    }
+  }
+}

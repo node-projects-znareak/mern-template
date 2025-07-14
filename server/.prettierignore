@@ -1,10 +1,12 @@
-/node_modules
-/.pnp
+
+node_modules
+.pnp
 .pnp.js
 
-/coverage
+coverage
 
-/build
+build
+dist
 
 .DS_Store
 .env.local
@@ -12,16 +14,10 @@
 .env.test.local
 .env.production.local
 .env
-*.zip
-/dist
-.pnpm-lock.yaml
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .vercel
 
 .idea
-.serverless/*
-
-# Google Cloud credentials
-google-credentials.json

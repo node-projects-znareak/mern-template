@@ -1,44 +1,78 @@
 {
-  "name": "galery",
-  "version": "0.1.0",
+  "name": "client",
   "private": true,
-  "dependencies": {
-    "axios": "^0.21.3",
-    "node-cache": "^5.1.2",
-    "node-sass": "^6.0.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-google-recaptcha": "^2.1.0",
-    "react-icons": "^4.2.0",
-    "react-loader-spinner": "^4.0.0",
-    "react-query": "^3.21.1",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "4.0.3",
-    "universal-cookie": "^4.0.4"
-  },
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite --force --open --strictPort --host --port 4000",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint --fix .",
+    "format": "npx prettier --write .",
+    "format:check": "npx prettier --check .",
+    "pre-commit": "npm run lint && npm run lint:fix && npm run format && npm run format:check",
+    "prepare": "husky",
+    "staged": "npx lint-staged --allow-empty",
+    "husky:install": "npm run prepare && echo npm run staged > .husky/pre-commit"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "dependencies": {
+    "@fontsource/inter": "^5.2.6",
+    "@million/lint": "1.0.14",
+    "@radix-ui/react-slot": "1.2.3",
+    "@tailwindcss/vite": "4.1.11",
+    "@tanstack/react-query": "5.83.0",
+    "@tanstack/react-query-devtools": "5.0.0-alpha.91",
+    "axios": "1.7.9",
+    "class-variance-authority": "0.7.1",
+    "classnames": "2.5.1",
+    "clsx": "2.1.1",
+    "constate": "3.3.3",
+    "eslint-plugin-better-tailwindcss": "3.6.0",
+    "lucide-react": "0.525.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-router-dom": "6.9.0",
+    "sass": "1.86.3",
+    "tailwind-merge": "3.3.1",
+    "tailwindcss": "4.1.11",
+    "tailwindcss-animate": "1.0.7",
+    "vite-plugin-svgr": "4.3.0"
   },
-  "browserslist": {
-    "production": [
-      ">0.3%",
-      "not ie 11",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "4.4.1",
+    "@eslint-react/eslint-plugin": "1.26.1",
+    "@eslint/eslintrc": "3.2.0",
+    "@eslint/js": "9.17.0",
+    "@types/node": "22.13.1",
+    "@types/nprogress": "0.2.3",
+    "@types/react": "18.3.18",
+    "@types/react-dom": "18.3.5",
+    "@typescript-eslint/eslint-plugin": "8.23.0",
+    "@vitejs/plugin-react-swc": "3.7.2",
+    "autoprefixer": "10.4.20",
+    "eslint": "9.17.0",
+    "eslint-config-prettier": "10.0.1",
+    "eslint-import-resolver-typescript": "3.7.0",
+    "eslint-plugin-import-x": "4.6.1",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react": "7.37.4",
+    "eslint-plugin-react-compiler": "19.0.0-beta-714736e-20250131",
+    "eslint-plugin-react-hooks": "5.0.0",
+    "eslint-plugin-react-refresh": "0.4.16",
+    "eslint-plugin-regexp": "2.7.0",
+    "eslint-plugin-security": "3.0.1",
+    "globals": "15.14.0",
+    "husky": "9.1.7",
+    "jiti": "2.4.2",
+    "lint-staged": "15.4.3",
+    "postcss": "8.5.1",
+    "sass-embedded": "1.83.4",
+    "tw-animate-css": "^1.3.5",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "8.18.2",
+    "vite": "5.4.11",
+    "vite-plugin-checker": "0.8.0",
+    "vite-plugin-remove-console": "2.2.0"
   }
 }

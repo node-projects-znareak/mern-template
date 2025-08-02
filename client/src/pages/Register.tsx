@@ -36,7 +36,6 @@ const Register = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     
-    // If it's the password field and there's already passwordConfirm, validate match
     if (name === 'password' && formData.passwordConfirm) {
       setShowPasswordMismatch(value !== formData.passwordConfirm);
     }
@@ -47,14 +46,12 @@ const Register = () => {
   };
 
   const handlePasswordConfirmFocus = () => {
-    // Show error if there are values and they don't match
     if (formData.password && formData.passwordConfirm && formData.password !== formData.passwordConfirm) {
       setShowPasswordMismatch(true);
     }
   };
 
   const handlePasswordConfirmBlur = () => {
-    // Validate match when leaving the field
     if (formData.password && formData.passwordConfirm) {
       setShowPasswordMismatch(formData.password !== formData.passwordConfirm);
     } else {
@@ -66,7 +63,6 @@ const Register = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     
-    // Check password match in real time with current password
     if (formData.password && value) {
       setShowPasswordMismatch(formData.password !== value);
     } else {
@@ -75,7 +71,6 @@ const Register = () => {
   };
 
   const handlePasswordBlur = () => {
-    // Validate match when leaving the main password field
     if (formData.password && formData.passwordConfirm) {
       setShowPasswordMismatch(formData.password !== formData.passwordConfirm);
     }
@@ -118,7 +113,6 @@ const Register = () => {
     onFinish(formData);
   };
 
-  // Validation to enable/disable the button
   const isFormValid = () => {
     const isNameValid = formData.name.trim().length > 0;
     const isEmailValid = formData.email.includes("@") && formData.email.includes(".");
@@ -127,7 +121,6 @@ const Register = () => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
     const isPasswordStrongEnough = passwordRegex.test(formData.password);
     
-    // Email must be 100% confirmed as available (hasSuccess = true)
     const isEmailConfirmedAvailable = hasSuccess;
     
     return isNameValid && 
@@ -204,7 +197,6 @@ const Register = () => {
                 className="pr-10"
               />
               
-              {/* Information icon with tooltip */}
               <div className="absolute right-8 top-1/2 mt-0.5 transform -translate-y-1/2">
                 <PasswordRequirementsTooltip password={formData.password} />
               </div>

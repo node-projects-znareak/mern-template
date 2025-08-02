@@ -18,7 +18,6 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Header */}
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">User Profile</h1>
           <Button variant="outline" onClick={logout}>
@@ -26,7 +25,6 @@ const Profile = () => {
           </Button>
         </div>
 
-        {/* User Information */}
         <Card>
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
@@ -78,7 +76,6 @@ const Profile = () => {
           </CardContent>
         </Card>
 
-        {/* Session Information */}
         <Card>
           <CardHeader>
             <CardTitle>Session Information</CardTitle>

@@ -18,8 +18,11 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   );
 }
 
-// PasswordInput with show/hide icon
-const PasswordInput = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+interface PasswordInputProps extends React.ComponentProps<"input"> {
+  className?: string;
+}
+
+export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
   ({ className, ...props }, ref) => {
     const [show, setShow] = React.useState(false);
     return (
@@ -50,4 +53,4 @@ const PasswordInput = React.forwardRef<HTMLInputElement, React.ComponentProps<"i
 );
 PasswordInput.displayName = "PasswordInput";
 
-export { Input, PasswordInput };
+export { Input };

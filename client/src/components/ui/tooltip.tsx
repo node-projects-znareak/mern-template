@@ -76,7 +76,6 @@ export const Tooltip = ({
         >
           {content}
           
-          {/* Arrow */}
           <div 
             className={classNames(
               "absolute w-0 h-0 border-4",

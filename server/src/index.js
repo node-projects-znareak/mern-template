@@ -32,6 +32,12 @@ if (API.ENVIROMENT === "development") {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
 
+if (API.ENVIROMENT === "production") {
+  app.set("trust proxy", 1);
+} else {
+  app.set("trust proxy", true);
+}
+
 app.use(compression());
 app.use(express.static("./uploads"));
 app.use(express.json());

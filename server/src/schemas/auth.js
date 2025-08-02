@@ -69,9 +69,19 @@ const requireIdValidation = yup.object({
   }),
 });
 
+const checkEmailSchemaValidation = yup.object({
+  query: yup.object({
+    email: yup
+      .string()
+      .email("El correo debe ser válido, ejemplo: example@domain.es")
+      .required("El correo es obligatorio"),
+  }),
+});
+
 module.exports = {
   loginSchemaValidation,
   signupSchemaValidation,
   passwordChangeValidation,
   requireIdValidation,
+  checkEmailSchemaValidation,
 };

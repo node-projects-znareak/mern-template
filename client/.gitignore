@@ -31,3 +31,4 @@ dist-ssr
 dev-dist/*
 android
 ios
+.vercel

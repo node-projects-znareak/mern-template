@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input, PasswordInput } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import useSignup from "@/hooks/useSignup";
+import { useCheckEmail } from "@/hooks/useCheckEmail";
 import { parseError } from "@/utils/http";
 
 function getPasswordStrength(password: string) {
@@ -21,6 +22,8 @@ function getPasswordStrength(password: string) {
 
 const Register = () => {
   const { onFinish, error, isLoading } = useSignup();
+  const { checkEmail, isChecking, error: emailError, clearError } = useCheckEmail();
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -28,9 +31,78 @@ const Register = () => {
     name: "",
   });
 
+  const [emailStatus, setEmailStatus] = useState<{
+    checked: boolean;
+    available: boolean;
+    message: string;
+  }>({
+    checked: false,
+    available: false,
+    message: "",
+  });
+
+  const [emailCheckTimeout, setEmailCheckTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (emailCheckTimeout) {
+        clearTimeout(emailCheckTimeout);
+      }
+    };
+  }, [emailCheckTimeout]);
+
+  const handleEmailCheck = useCallback(async (email: string) => {
+    if (!email || !email.includes("@")) {
+      setEmailStatus({
+        checked: false,
+        available: false,
+        message: "",
+      });
+      return;
+    }
+
+    const result = await checkEmail(email);
+    if (result) {
+      setEmailStatus({
+        checked: true,
+        available: result.available,
+        message: result.available 
+          ? "✓ Email disponible" 
+          : "✗ Este email ya está registrado",
+      });
+    }
+  }, [checkEmail]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Si el campo es email, verificar disponibilidad con debounce
+    if (name === "email") {
+      // Limpiar el timeout anterior
+      if (emailCheckTimeout) {
+        clearTimeout(emailCheckTimeout);
+      }
+
+      // Limpiar errores previos
+      clearError();
+      
+      // Reset email status
+      setEmailStatus({
+        checked: false,
+        available: false,
+        message: "",
+      });
+
+      // Si el email es válido, programar verificación
+      if (value && value.includes("@") && value.includes(".")) {
+        const timeout = setTimeout(() => {
+          handleEmailCheck(value);
+        }, 800); // 800ms de debounce
+        setEmailCheckTimeout(timeout);
+      }
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -44,6 +116,12 @@ const Register = () => {
 
     if (!formData.email || !formData.email.includes("@") || !formData.email.includes(".")) {
       alert("Please enter a valid email");
+      return;
+    }
+
+    // Verificar si el email está disponible
+    if (emailStatus.checked && !emailStatus.available) {
+      alert("Este email ya está registrado. Por favor, usa otro.");
       return;
     }
 
@@ -94,15 +172,47 @@ const Register = () => {
             required
           />
 
-          <Input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            disabled={isLoading}
-            required
-          />
+          <div className="space-y-1">
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={isLoading}
+              required
+              className={
+                emailStatus.checked
+                  ? emailStatus.available
+                    ? "border-green-500 focus:border-green-500"
+                    : "border-red-500 focus:border-red-500"
+                  : ""
+              }
+            />
+            
+            {/* Estado de verificación del email */}
+            {isChecking && (
+              <div className="text-xs text-blue-600 flex items-center">
+                <span className="animate-pulse">Verificando email...</span>
+              </div>
+            )}
+            
+            {emailError && (
+              <div className="text-xs text-red-600">
+                {emailError}
+              </div>
+            )}
+            
+            {emailStatus.checked && (
+              <div 
+                className={`text-xs ${
+                  emailStatus.available ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {emailStatus.message}
+              </div>
+            )}
+          </div>
 
           <div className="space-y-1">
             <PasswordInput

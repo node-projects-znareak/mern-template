@@ -19,3 +19,9 @@ export interface LoginResponse {
   user: User;
   token: string;
 }
+
+export interface EmailCheckResponse {
+  email: string;
+  available: boolean;
+  inUse: boolean;
+}

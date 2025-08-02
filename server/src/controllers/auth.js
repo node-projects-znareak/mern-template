@@ -40,6 +40,26 @@ class AuthController {
       next(err);
     }
   }
+
+  async checkEmailAvailability(req, res, next) {
+    try {
+      const { email } = req.query;
+      
+      if (!email) {
+        return error(res, "El email es requerido", 400);
+      }
+
+      const isInUse = await UserService.isEmailInUse(email);
+      
+      return success(res, { 
+        email,
+        available: !isInUse,
+        inUse: isInUse
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = new AuthController();

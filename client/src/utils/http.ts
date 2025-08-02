@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ErrorFormat, ResponseData, ResponseFormat } from "@/types/axios";
-import type { Session, User } from "@interfaces/auth";
+import type { User, EmailCheckResponse } from "@interfaces/auth";
 import { getToken, removeToken } from "@/utils/token";
 import { AxiosErrorResponse, ErrorWithData, ErrorWithMessage } from "@/types/error";
 
@@ -52,6 +52,11 @@ export const signupUser = async (credentials: {
     "/auth/signup",
     credentials
   );
+  return response.data;
+};
+
+export const checkEmailAvailability = async (email: string) => {
+  const { data: response } = await instance.get<ResponseData<EmailCheckResponse>>(`/auth/check-email?email=${encodeURIComponent(email)}`);
   return response.data;
 };
 

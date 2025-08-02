@@ -1,8 +1,14 @@
 {
-  "name": "client",
+  "name": "mern-template-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": "libardo",
+  "license": "ISC",
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=11.1.0"
+  },
   "scripts": {
     "dev": "vite --force --open --strictPort --host --port 4000",
     "build": "tsc -b && vite build",

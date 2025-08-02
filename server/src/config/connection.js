@@ -3,9 +3,6 @@ const retry = require("retry");
 const connection = Mongoose.connection;
 const { MONGO_DB_URL } = require("@config/variables").API;
 const { message } = require("@helpers/index");
-const operation = retry.operation({
-  retries: 10,
-});
 
 connection.on("open", () => {
   message.success(`Connected to mongo host: ${connection.host}`);
@@ -30,20 +27,29 @@ async function closeDb(server) {
 
 function connectDb() {
   return new Promise((resolve, reject) => {
-    operation.attempt(async () => {
+    const operation = retry.operation({
+      retries: 3,
+      factor: 2,
+      minTimeout: 1000,
+      maxTimeout: 5000,
+      randomize: true,
+    });
+
+    operation.attempt(async (currentAttempt) => {
       try {
         console.log("");
-        message.success("Connecting to MongoDB...");
+        message.success(`Connecting to MongoDB... (Attempt ${currentAttempt})`);
         const con = await Mongoose.connect(MONGO_DB_URL, { ignoreUndefined: true });
         resolve(con);
       } catch (err) {
         if (operation.retry(err)) {
-          message.error("Error connecting to MongoDB", err);
+          message.error(`Connection attempt ${currentAttempt} failed, retrying...`, err.message);
           return;
         }
-        message.error(operation.mainError() ?? err);
-        reject(err);
-        process.exit(1);
+
+        const finalError = operation.mainError() ?? err;
+        message.error("Failed to connect to MongoDB after all retries", finalError);
+        reject(finalError);
       }
     });
   });

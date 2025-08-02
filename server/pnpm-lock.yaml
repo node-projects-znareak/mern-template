@@ -86,6 +86,9 @@ importers:
       yup:
         specifier: 1.4.0
         version: 1.4.0
+      zod:
+        specifier: ^4.0.14
+        version: 4.0.14
     devDependencies:
       '@eslint/js':
         specifier: 9.2.0
@@ -1529,6 +1532,9 @@ packages:
   zhead@2.2.4:
     resolution: {integrity: sha512-8F0OI5dpWIA5IGG5NHUg9staDwz/ZPxZtvGVf01j7vHqSyZ0raHY+78atOVxRqb73AotX22uV1pXt3gYSstGag==}
 
+  zod@4.0.14:
+    resolution: {integrity: sha512-nGFJTnJN6cM2v9kXL+SOBq3AtjQby3Mv5ySGFof5UGRHrRioSJ5iG680cYNjE/yWk671nROcpPj4hAS8nyLhSw==}
+
 snapshots:
 
   '@apidevtools/json-schema-ref-parser@9.1.2':
@@ -2925,3 +2931,5 @@ snapshots:
       commander: 9.5.0
 
   zhead@2.2.4: {}
+
+  zod@4.0.14: {}

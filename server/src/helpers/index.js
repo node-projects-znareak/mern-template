@@ -5,7 +5,7 @@ const Table = require("cli-table");
 const pretty = require("pino-pretty");
 const pino = require("pino");
 
-const { SECRET_TOKEN } = require("@config/variables").API;
+const { JWT_SECRET_TOKEN, JWT_SALT_TOKEN } = require("@config/variables").API;
 
 const logger = pino(
   pretty({
@@ -70,10 +70,10 @@ function isRequestAjaxOrApi(req) {
 /**
  * Encrypts a payload using bcrypt with the given salt.
  * @param {string} payload - The payload to encrypt.
- * @param {string} [SALT=SECRET_TOKEN] - The salt to use for encryption.
+ * @param {string} [SALT=JWT_SALT_TOKEN] - The salt to use for encryption.
  * @returns {string} The hashed payload.
  */
-function encryptPayload(payload, SALT = SECRET_TOKEN) {
+function encryptPayload(payload, SALT = JWT_SALT_TOKEN) {
   const salt = bcrypt.genSaltSync(parseInt(SALT));
   const hash = bcrypt.hashSync(payload, salt);
   return hash;
@@ -94,7 +94,7 @@ function hashPassword(password) {
  * @returns {string} The generated JWT.
  */
 function createUserJwt(payload) {
-  const token = jwt.sign(payload, SECRET_TOKEN, {
+  const token = jwt.sign(payload, JWT_SECRET_TOKEN, {
     expiresIn: "75d",
   });
   return token;
@@ -108,7 +108,7 @@ function createUserJwt(payload) {
  */
 function getInfoFromUserJwt(token, options = {}) {
   return new Promise((resolve, reject) => {
-    jwt.verify(token, SECRET_TOKEN, options, (err, payload) => {
+    jwt.verify(token, JWT_SECRET_TOKEN, options, (err, payload) => {
       if (err) return reject(new Error(err));
       resolve(payload);
     });

@@ -5,7 +5,6 @@ const wrapServerErrors = require("@middlewares/errorsHandling");
 
 async function startServer(app, routers) {
   try {
-    const ip = getLocalIP();
     const con = await connectDb();
 
     if (!con) return;
@@ -13,6 +12,10 @@ async function startServer(app, routers) {
     wrapServerErrors(app);
 
     app.use("/api", routers);
+
+    app.get("/health", (req, res) => {
+      res.status(200).json({ status: "OK" });
+    });
 
     app.use((req, res) => {
       res.status(404).json({
@@ -24,14 +27,17 @@ async function startServer(app, routers) {
 
     const server = app.listen(PORT, HOST, () => {
       console.log("");
-      message.success(`> Local server has started on http://${HOST || "localhost"}:${PORT}/`);
-      message.success(`> Remote server has started on http://${ip}:${PORT}/`);
-      console.log("");
 
-      message.success(`Enviroment: ${API.ENVIROMENT ?? "Not defined"}`);
+      const ip = getLocalIP();
+      const { consola } = require("consola");
+
+      consola.success(`Server running at http://${HOST || "localhost"}:${PORT}`);
+      consola.success(`Remote server at http://${ip}:${PORT}`);
+      consola.success(`Enviroment: ${API.ENVIROMENT ?? "Not defined"}`);
 
       if (API.ENVIROMENT === "development") {
-        message.success(
+        consola.warn("Development mode enabled, extras dependencies are loaded");
+        consola.success(
           `You can access the documentation on http://${HOST || ip || "localhost"}:${PORT}/api-docs`
         );
         const expressListEndpoints = require("express-list-endpoints");

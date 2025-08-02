@@ -1,14 +1,13 @@
 {
-  "name": "MERN Template Backend",
+  "name": "mern-template-backend",
   "version": "1.0.0",
-  "description": "This repository contains the backend for troq frontend",
+  "description": "Mern Template Backend",
   "main": "index.js",
-  "author": "nomulabs",
+  "author": "libardo",
   "license": "ISC",
   "engines": {
     "node": ">=22.12.0",
-    "npm": ">=11.1.0",
-    "pnpm": ">=10.1.0"
+    "npm": ">=11.1.0"
   },
   "scripts": {
     "start": "node ./src/index.js",
@@ -55,7 +54,8 @@
     "pino": "8.20.0",
     "pino-pretty": "11.0.0",
     "retry": "0.13.1",
-    "yup": "1.4.0"
+    "yup": "1.4.0",
+    "zod": "^4.0.14"
   },
   "devDependencies": {
     "@eslint/js": "9.2.0",

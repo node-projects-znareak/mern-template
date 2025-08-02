@@ -62,7 +62,7 @@ app.use(
 
 app.use(
   cors({
-    origin: API.ALLOWED_DOMAINS,
+    origin: API.CORS_ALLOWED_DOMAINS,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
@@ -72,7 +72,6 @@ app.use(
 app.disable("x-powered-by");
 
 startServer(app, routes);
-
 
 process.on("uncaughtException", (err) => {
   logger.error(err);

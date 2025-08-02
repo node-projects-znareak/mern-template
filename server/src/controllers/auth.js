@@ -9,13 +9,13 @@ class AuthController {
       const user = await UserService.existsUser(email);
       if (user) {
         if (isInvalidPassword(password, user.password))
-          return error(res, "Usuario o clave incorrecta");
+          return error(res, "Invalid username or password");
 
         delete user.password;
         const token = createUserJwt(user);
         return success(res, { user, token });
       }
-      error(res, "Usuario o clave incorrecta");
+      error(res, "Invalid username or password");
     } catch (err) {
       next(err);
     }
@@ -26,7 +26,7 @@ class AuthController {
       const { email, password, name } = req.body;
       const user = await UserService.existsUser(email);
       
-      if (user) return error(res, "El correo ya está en uso");
+      if (user) return error(res, "Email is already in use");
 
       const passwordHashed = hashPassword(password);
       const userCreated = await UserService.createUser({

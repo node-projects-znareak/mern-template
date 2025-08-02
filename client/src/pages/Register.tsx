@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { EmailStatusIndicator } from "@/components/ui/EmailStatusIndicator";
 import { PasswordRequirementsTooltip } from "@/components/ui/PasswordRequirementsTooltip";
 import useSignup from "@/hooks/useSignup";
 import { useEmailValidation } from "@/hooks/useEmailValidation";
+import { useRegisterLogic } from "@/hooks/useRegisterLogic";
 import { parseError } from "@/utils/http";
 import { getPasswordStrength } from "@/utils/helpers";
 
@@ -22,114 +22,27 @@ const Register = () => {
     hasSuccess,
     isNetworkError
   } = useEmailValidation();
-  
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    passwordConfirm: "",
-    name: "",
+
+  const {
+    formData,
+    handleChange,
+    handleEmailInputBlur,
+    handlePasswordConfirmChange,
+    handleSubmit,
+    isFormValid,
+    hasUserInteracted,
+    passwordValidation: {
+      showPasswordMismatch,
+      handlePasswordConfirmFocus,
+      handlePasswordConfirmBlur,
+      handlePasswordBlur,
+    },
+  } = useRegisterLogic({
+    hasSuccess,
+    canSubmit,
+    setEmail,
+    onFinish,
   });
-
-  const [showPasswordMismatch, setShowPasswordMismatch] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    
-    if (name === 'password' && formData.passwordConfirm) {
-      setShowPasswordMismatch(value !== formData.passwordConfirm);
-    }
-  };
-
-  const handleEmailInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordConfirmFocus = () => {
-    if (formData.password && formData.passwordConfirm && formData.password !== formData.passwordConfirm) {
-      setShowPasswordMismatch(true);
-    }
-  };
-
-  const handlePasswordConfirmBlur = () => {
-    if (formData.password && formData.passwordConfirm) {
-      setShowPasswordMismatch(formData.password !== formData.passwordConfirm);
-    } else {
-      setShowPasswordMismatch(false);
-    }
-  };
-
-  const handlePasswordConfirmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    
-    if (formData.password && value) {
-      setShowPasswordMismatch(formData.password !== value);
-    } else {
-      setShowPasswordMismatch(false);
-    }
-  };
-
-  const handlePasswordBlur = () => {
-    if (formData.password && formData.passwordConfirm) {
-      setShowPasswordMismatch(formData.password !== formData.passwordConfirm);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!formData.name.trim()) {
-      alert("Please enter your name");
-      return;
-    }
-
-    if (!formData.email || !formData.email.includes("@") || !formData.email.includes(".")) {
-      alert("Please enter a valid email");
-      return;
-    }
-
-    if (!canSubmit) {
-      alert("Please verify that the email is available before continuing.");
-      return;
-    }
-
-    if (!formData.password || formData.password.length < 8) {
-      alert("Password must be at least 8 characters");
-      return;
-    }
-
-    if (formData.password !== formData.passwordConfirm) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
-    if (!passwordRegex.test(formData.password)) {
-      alert("Password must contain uppercase, lowercase letters and a number");
-      return;
-    }
-
-    onFinish(formData);
-  };
-
-  const isFormValid = () => {
-    const isNameValid = formData.name.trim().length > 0;
-    const isEmailValid = formData.email.includes("@") && formData.email.includes(".");
-    const isPasswordValid = formData.password.length >= 8;
-    const isPasswordConfirmValid = formData.password === formData.passwordConfirm;
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
-    const isPasswordStrongEnough = passwordRegex.test(formData.password);
-    
-    const isEmailConfirmedAvailable = hasSuccess;
-    
-    return isNameValid && 
-           isEmailValid && 
-           isEmailConfirmedAvailable && 
-           isPasswordValid && 
-           isPasswordConfirmValid && 
-           isPasswordStrongEnough;
-  };
 
   const strength = getPasswordStrength(formData.password);
 
@@ -248,7 +161,7 @@ const Register = () => {
             {isLoading ? "Signing up..." : "Sign up"}
           </Button>
 
-          {!isFormValid() && !isLoading && (
+          {!isFormValid() && !isLoading && hasUserInteracted && (
             <div className="text-xs text-red-500 text-center -mt-3 font-medium">
               {!hasSuccess && formData.email ? 
                 "Please verify that the email is available before continuing" : 

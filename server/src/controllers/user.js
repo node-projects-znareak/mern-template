@@ -7,7 +7,7 @@ class UserController {
       const { password, passwordConfirm } = req.body;
       const id = req.user._id;
       if (password !== passwordConfirm) {
-        return error(res, "Las contraseñas no coinciden", 400);
+        return error(res, "Passwords do not match", 400);
       }
       const userUpdated = await UserService.changePassword({ id, password });
       success(res, userUpdated);

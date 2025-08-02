@@ -1,8 +1,8 @@
 const { z } = require("zod");
 
 const envSchema = z.object({
-  PORT: z.coerce.number().min(1).max(65535),
-  HOST: z.string(),
+  PORT: z.coerce.number().min(1).max(65535).optional(),
+  HOST: z.string().optional(),
 
   ENVIROMENT: z.enum(["development", "production", "test"]).default("development"),
 

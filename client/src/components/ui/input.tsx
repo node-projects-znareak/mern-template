@@ -1,6 +1,6 @@
 import * as React from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/helpers";
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
@@ -18,7 +18,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   );
 }
 
-// PasswordInput con icono de mostrar/ocultar
+// PasswordInput with show/hide icon
 const PasswordInput = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, ...props }, ref) => {
     const [show, setShow] = React.useState(false);

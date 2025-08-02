@@ -1,46 +1,28 @@
-import { useState, useCallback } from "react";
-import { checkEmailAvailability, formatError } from "@/utils/http";
+import { useQuery } from "@tanstack/react-query";
+import { checkEmailAvailability } from "@/utils/http";
+import { isEmailFormatValid } from "@/utils/email";
 
 interface UseCheckEmailReturn {
-  checkEmail: (email: string) => Promise<{ available: boolean; inUse: boolean } | null>;
-  isChecking: boolean;
-  error: string | null;
-  clearError: () => void;
+  data: { available: boolean; inUse: boolean } | undefined;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
 }
 
-export const useCheckEmail = (): UseCheckEmailReturn => {
-  const [isChecking, setIsChecking] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const checkEmail = useCallback(async (email: string) => {
-    if (!email || !email.includes("@")) {
-      setError("Por favor, ingresa un email válido");
-      return null;
-    }
-
-    setIsChecking(true);
-    setError(null);
-
-    try {
-      const result = await checkEmailAvailability(email);
-      return result;
-    } catch (err) {
-      const errorMessage = formatError(err);
-      setError(errorMessage);
-      return null;
-    } finally {
-      setIsChecking(false);
-    }
-  }, []);
-
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
+export const useCheckEmail = (email: string, enabled: boolean = false): UseCheckEmailReturn => {
+  const query = useQuery({
+    queryKey: ["checkEmail", email],
+    queryFn: () => checkEmailAvailability(email),
+    enabled: enabled && !!email && isEmailFormatValid(email),
+    retry: 2,
+    staleTime: 30000, // 30 segundos
+    gcTime: 5 * 60 * 1000, // 5 minutos
+  });
 
   return {
-    checkEmail,
-    isChecking,
-    error,
-    clearError,
+    data: query.data,
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
   };
 };

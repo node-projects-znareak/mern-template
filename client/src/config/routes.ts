@@ -2,13 +2,13 @@ import { privateRoute, publicRoute, route, redirectRoute } from "@utils/routes";
 import { lazy } from "react";
 
 const routers: ReturnType<typeof route>[] = [
-  // Página principal (accesible para todos)
+  // Main page (accessible to everyone)
   publicRoute(
     lazy(() => import("@pages/Home")),
     "/"
   ),
 
-  // Rutas públicas (accesibles sin autenticación)
+  // Public routes (accessible without authentication)
   redirectRoute(
     lazy(() => import("@pages/Login")),
     "/login"
@@ -19,7 +19,7 @@ const routers: ReturnType<typeof route>[] = [
     "/register"
   ),
 
-  // Rutas privadas (requieren autenticación)
+  // Private routes (require authentication)
   privateRoute(
     lazy(() => import("@pages/Profile")),
     "/profile"

@@ -35,7 +35,7 @@ if (API.ENVIROMENT === "development") {
 if (API.ENVIROMENT === "production") {
   app.set("trust proxy", 1);
 } else {
-  app.set("trust proxy", true);
+  app.set("trust proxy", 0);
 }
 
 app.use(compression());

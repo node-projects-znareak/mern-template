@@ -1,28 +1,27 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import classNames from "classnames";
 import { Button } from "@/components/ui/button";
 import { Input, PasswordInput } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { EmailStatusIndicator } from "@/components/ui/EmailStatusIndicator";
+import { PasswordRequirementsTooltip } from "@/components/ui/PasswordRequirementsTooltip";
 import useSignup from "@/hooks/useSignup";
-import { useCheckEmail } from "@/hooks/useCheckEmail";
+import { useEmailValidation } from "@/hooks/useEmailValidation";
 import { parseError } from "@/utils/http";
-
-function getPasswordStrength(password: string) {
-  let score = 0;
-  if (password.length >= 8) score++;
-  if (/[A-Z]/.test(password)) score++;
-  if (/[a-z]/.test(password)) score++;
-  if (/\d/.test(password)) score++;
-  if (/[^a-z0-9]/i.test(password)) score++; // Usar bandera 'i' para simplificar
-  if (password.length >= 12) score++;
-  if (score <= 2) return { color: "bg-red-500", label: "Weak" };
-  if (score <= 4) return { color: "bg-yellow-400", label: "Medium" };
-  return { color: "bg-green-500", label: "Strong" };
-}
+import { getPasswordStrength } from "@/utils/helpers";
 
 const Register = () => {
   const { onFinish, error, isLoading } = useSignup();
-  const { checkEmail, isChecking, error: emailError, clearError } = useCheckEmail();
+  const { 
+    setEmail,
+    isChecking,
+    canSubmit,
+    message,
+    hasError,
+    hasSuccess,
+    isNetworkError
+  } = useEmailValidation();
   
   const [formData, setFormData] = useState({
     email: "",
@@ -31,84 +30,60 @@ const Register = () => {
     name: "",
   });
 
-  const [emailStatus, setEmailStatus] = useState<{
-    checked: boolean;
-    available: boolean;
-    message: string;
-  }>({
-    checked: false,
-    available: false,
-    message: "",
-  });
-
-  const [emailCheckTimeout, setEmailCheckTimeout] = useState<NodeJS.Timeout | null>(null);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (emailCheckTimeout) {
-        clearTimeout(emailCheckTimeout);
-      }
-    };
-  }, [emailCheckTimeout]);
-
-  const handleEmailCheck = useCallback(async (email: string) => {
-    if (!email || !email.includes("@")) {
-      setEmailStatus({
-        checked: false,
-        available: false,
-        message: "",
-      });
-      return;
-    }
-
-    const result = await checkEmail(email);
-    if (result) {
-      setEmailStatus({
-        checked: true,
-        available: result.available,
-        message: result.available 
-          ? "✓ Email disponible" 
-          : "✗ Este email ya está registrado",
-      });
-    }
-  }, [checkEmail]);
+  const [showPasswordMismatch, setShowPasswordMismatch] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // If it's the password field and there's already passwordConfirm, validate match
+    if (name === 'password' && formData.passwordConfirm) {
+      setShowPasswordMismatch(value !== formData.passwordConfirm);
+    }
+  };
 
-    // Si el campo es email, verificar disponibilidad con debounce
-    if (name === "email") {
-      // Limpiar el timeout anterior
-      if (emailCheckTimeout) {
-        clearTimeout(emailCheckTimeout);
-      }
+  const handleEmailInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
 
-      // Limpiar errores previos
-      clearError();
-      
-      // Reset email status
-      setEmailStatus({
-        checked: false,
-        available: false,
-        message: "",
-      });
+  const handlePasswordConfirmFocus = () => {
+    // Show error if there are values and they don't match
+    if (formData.password && formData.passwordConfirm && formData.password !== formData.passwordConfirm) {
+      setShowPasswordMismatch(true);
+    }
+  };
 
-      // Si el email es válido, programar verificación
-      if (value && value.includes("@") && value.includes(".")) {
-        const timeout = setTimeout(() => {
-          handleEmailCheck(value);
-        }, 800); // 800ms de debounce
-        setEmailCheckTimeout(timeout);
-      }
+  const handlePasswordConfirmBlur = () => {
+    // Validate match when leaving the field
+    if (formData.password && formData.passwordConfirm) {
+      setShowPasswordMismatch(formData.password !== formData.passwordConfirm);
+    } else {
+      setShowPasswordMismatch(false);
+    }
+  };
+
+  const handlePasswordConfirmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Check password match in real time with current password
+    if (formData.password && value) {
+      setShowPasswordMismatch(formData.password !== value);
+    } else {
+      setShowPasswordMismatch(false);
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    // Validate match when leaving the main password field
+    if (formData.password && formData.passwordConfirm) {
+      setShowPasswordMismatch(formData.password !== formData.passwordConfirm);
     }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validations
     if (!formData.name.trim()) {
       alert("Please enter your name");
       return;
@@ -119,9 +94,8 @@ const Register = () => {
       return;
     }
 
-    // Verificar si el email está disponible
-    if (emailStatus.checked && !emailStatus.available) {
-      alert("Este email ya está registrado. Por favor, usa otro.");
+    if (!canSubmit) {
+      alert("Please verify that the email is available before continuing.");
       return;
     }
 
@@ -135,7 +109,6 @@ const Register = () => {
       return;
     }
 
-    // Strong password validation
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
     if (!passwordRegex.test(formData.password)) {
       alert("Password must contain uppercase, lowercase letters and a number");
@@ -143,6 +116,26 @@ const Register = () => {
     }
 
     onFinish(formData);
+  };
+
+  // Validation to enable/disable the button
+  const isFormValid = () => {
+    const isNameValid = formData.name.trim().length > 0;
+    const isEmailValid = formData.email.includes("@") && formData.email.includes(".");
+    const isPasswordValid = formData.password.length >= 8;
+    const isPasswordConfirmValid = formData.password === formData.passwordConfirm;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+    const isPasswordStrongEnough = passwordRegex.test(formData.password);
+    
+    // Email must be 100% confirmed as available (hasSuccess = true)
+    const isEmailConfirmedAvailable = hasSuccess;
+    
+    return isNameValid && 
+           isEmailValid && 
+           isEmailConfirmedAvailable && 
+           isPasswordValid && 
+           isPasswordConfirmValid && 
+           isPasswordStrongEnough;
   };
 
   const strength = getPasswordStrength(formData.password);
@@ -179,54 +172,47 @@ const Register = () => {
               placeholder="Email"
               value={formData.email}
               onChange={handleChange}
+              onBlur={handleEmailInputBlur}
               disabled={isLoading}
               required
-              className={
-                emailStatus.checked
-                  ? emailStatus.available
-                    ? "border-green-500 focus:border-green-500"
-                    : "border-red-500 focus:border-red-500"
-                  : ""
-              }
+              className={classNames({
+                "border-green-500 focus:border-green-500": hasSuccess,
+                "border-red-500 focus:border-red-500": hasError,
+              })}
             />
-            
-            {/* Estado de verificación del email */}
-            {isChecking && (
-              <div className="text-xs text-blue-600 flex items-center">
-                <span className="animate-pulse">Verificando email...</span>
-              </div>
-            )}
-            
-            {emailError && (
-              <div className="text-xs text-red-600">
-                {emailError}
-              </div>
-            )}
-            
-            {emailStatus.checked && (
-              <div 
-                className={`text-xs ${
-                  emailStatus.available ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {emailStatus.message}
-              </div>
-            )}
+
+            <EmailStatusIndicator
+              isChecking={isChecking}
+              message={message}
+              hasError={hasError}
+              hasSuccess={hasSuccess}
+              isNetworkError={isNetworkError}
+            />
           </div>
 
           <div className="space-y-1">
-            <PasswordInput
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              minLength={8}
-              disabled={isLoading}
-              required
-            />
+            <div className="relative">
+              <PasswordInput
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                onBlur={handlePasswordBlur}
+                minLength={8}
+                disabled={isLoading}
+                required
+                className="pr-10"
+              />
+              
+              {/* Information icon with tooltip */}
+              <div className="absolute right-8 top-1/2 mt-0.5 transform -translate-y-1/2">
+                <PasswordRequirementsTooltip password={formData.password} />
+              </div>
+            </div>
+            
             <div className="h-2 w-full rounded bg-muted">
               <div
-                className={`h-2 rounded transition-all duration-300 ${strength.color}`}
+                className={classNames("h-2 rounded transition-all duration-300", strength.color)}
                 style={{
                   width: formData.password
                     ? `${strength.label === "Weak" ? 33 : strength.label === "Medium" ? 66 : 100}%`
@@ -235,29 +221,49 @@ const Register = () => {
               />
             </div>
             {formData.password && (
-              <div className="text-xs mt-1" style={{ color: strength.color.replace("bg-", "").replace("-500", "") }}>
+              <div
+                className={classNames("text-xs mt-1", {
+                  "text-red-500": strength.label === "Weak",
+                  "text-yellow-400": strength.label === "Medium",
+                  "text-green-500": strength.label === "Strong",
+                })}
+              >
                 {strength.label}
               </div>
             )}
           </div>
 
-          <PasswordInput
-            name="passwordConfirm"
-            placeholder="Confirm password"
-            value={formData.passwordConfirm}
-            onChange={handleChange}
-            minLength={8}
-            disabled={isLoading}
-            required
-          />
+          <div className="space-y-1">
+            <PasswordInput
+              name="passwordConfirm"
+              placeholder="Confirm password"
+              value={formData.passwordConfirm}
+              onChange={handlePasswordConfirmChange}
+              onFocus={handlePasswordConfirmFocus}
+              onBlur={handlePasswordConfirmBlur}
+              minLength={8}
+              disabled={isLoading}
+              required
+              className={classNames({
+                "border-red-500 focus:border-red-500": showPasswordMismatch,
+              })}
+            />
 
-          <p className="text-xs text-muted-foreground text-center">
-            Password must contain uppercase, lowercase letters and a number
-          </p>
+            {showPasswordMismatch && <div className="text-xs text-red-500 mt-1">Passwords do not match</div>}
+          </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="w-full" disabled={isLoading || !isFormValid()}>
             {isLoading ? "Signing up..." : "Sign up"}
           </Button>
+
+          {!isFormValid() && !isLoading && (
+            <div className="text-xs text-red-500 text-center -mt-3 font-medium">
+              {!hasSuccess && formData.email ? 
+                "Please verify that the email is available before continuing" : 
+                "Complete all fields correctly to continue"
+              }
+            </div>
+          )}
 
           <div className="text-center">
             <p className="text-sm text-muted-foreground">

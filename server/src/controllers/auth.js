@@ -25,6 +25,7 @@ class AuthController {
     try {
       const { email, password, name } = req.body;
       const user = await UserService.existsUser(email);
+      
       if (user) return error(res, "El correo ya está en uso");
 
       const passwordHashed = hashPassword(password);
@@ -44,11 +45,6 @@ class AuthController {
   async checkEmailAvailability(req, res, next) {
     try {
       const { email } = req.query;
-      
-      if (!email) {
-        return error(res, "El email es requerido", 400);
-      }
-
       const isInUse = await UserService.isEmailInUse(email);
       
       return success(res, { 

@@ -6,7 +6,7 @@ import { useSessionContext } from "@context/SessionContext";
 const Home = () => {
   const { user, logout } = useSessionContext();
   const navigate = useNavigate();
-  // console.log({user})
+  
   const handleLogout = () => {
     logout();
     navigate("/login");

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ErrorFormat, ResponseData, ResponseFormat } from "@/types/axios";
-import type { User, EmailCheckResponse } from "@interfaces/auth";
+import type { User } from "@interfaces/auth";
+import type { EmailCheckResponse } from "@/types/email";
 import { getToken, removeToken } from "@/utils/token";
 import { AxiosErrorResponse, ErrorWithData, ErrorWithMessage } from "@/types/error";
 
@@ -71,7 +72,6 @@ export const formatError = (error: unknown): string => {
 
   return "Ha ocurrido un error inesperado";
 };
-
 
 export function parseError(error: unknown): string {
   if (typeof error === "string") return error;

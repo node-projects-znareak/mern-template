@@ -22,8 +22,8 @@
     "prepare": "husky",
     "staged": "npx lint-staged --allow-empty",
     "husky:install": "npm run prepare && echo npm run staged > .husky/pre-commit",
-    "compile": "rm -rf dist && mkdir dist && cp -r src/ dist/src/ && cp package.json dist/ && cp .env dist/ && cp index.js dist/",
-    "build": "npm run compile && npm install --omit=dev --prefix dist && (cd dist && zip -r ../lambda.zip .)"
+    "compile": "rm -rf dist && mkdir dist && cp -r src/ dist/src/ && cp package.json dist/ && cp .env dist/ && cp src/index.js dist/",
+    "build:zip": "npm run compile && npm install --omit=dev --prefix dist && (tar.exe -a -c -f ../lambda.zip dist)"
   },
   "lint-staged": {
     "**/*.{js,ts,tsx}": "npm run pre-commit"
@@ -80,3 +80,4 @@
     "@schemas": "./src/schemas"
   }
 }
+

@@ -18,7 +18,7 @@ export default function useUserLogin() {
     },
   });
 
-  const handleAuth = async (values: LoginCredentials) => {
+  const onFinish = async (values: LoginCredentials) => {
     try {
       await mutation.mutateAsync(values);
     } catch (err) {
@@ -26,12 +26,8 @@ export default function useUserLogin() {
     }
   };
 
-  const onFinish = async (values: LoginCredentials) => {
-    await handleAuth(values);
-  };
 
   return {
-    handleAuth,
     onFinish,
     isLoading: mutation.isPending,
     error: mutation.error ? parseError(mutation.error) : null,

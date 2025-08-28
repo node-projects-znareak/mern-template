@@ -33,6 +33,7 @@ const Register = () => {
     hasUserInteracted,
     passwordValidation: {
       showPasswordMismatch,
+      showConfirmPasswordRequired,
       handlePasswordConfirmFocus,
       handlePasswordConfirmBlur,
       handlePasswordBlur,
@@ -125,7 +126,7 @@ const Register = () => {
                 }}
               />
             </div>
-            {formData.password && (
+            {!!formData.password && (
               <div
                 className={classNames("text-xs mt-1", {
                   "text-red-500": strength.label === "Weak",
@@ -150,18 +151,19 @@ const Register = () => {
               disabled={isLoading}
               required
               className={classNames({
-                "border-red-500 focus:border-red-500": showPasswordMismatch,
+                "border-red-500 focus:border-red-500": showPasswordMismatch || showConfirmPasswordRequired,
               })}
             />
 
-            {showPasswordMismatch && <div className="text-xs text-red-500 mt-1">Passwords do not match</div>}
+            {!!showPasswordMismatch && <div className="text-xs text-red-500 mt-1">Passwords do not match</div>}
+            {!!showConfirmPasswordRequired && <div className="text-xs text-red-500 mt-1">Please confirm your password</div>}
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading || !isFormValid()}>
             {isLoading ? "Signing up..." : "Sign up"}
           </Button>
 
-          {!isFormValid() && !isLoading && hasUserInteracted && (
+          {!isFormValid() && !isLoading && !!hasUserInteracted && (
             <div className="text-xs text-red-500 text-center -mt-3 font-medium">
               {!hasSuccess && formData.email ? 
                 "Please verify that the email is available before continuing" : 

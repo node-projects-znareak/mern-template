@@ -5,9 +5,9 @@ import { Input, PasswordInput } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { EmailStatusIndicator } from "@/components/ui/EmailStatusIndicator";
 import { PasswordRequirementsTooltip } from "@/components/ui/PasswordRequirementsTooltip";
-import useSignup from "@/hooks/useSignup";
-import { useEmailValidation } from "@/hooks/useEmailValidation";
-import { useRegisterLogic } from "@/hooks/useRegisterLogic";
+import useSignup from "@/hooks/auth/useSignup";
+import { useEmailValidation } from "@/hooks/form/useEmailValidation";
+import { useRegisterLogic } from "@/hooks/form/useRegisterLogic";
 import { parseError } from "@/utils/http";
 import { getPasswordStrength } from "@/utils/helpers";
 

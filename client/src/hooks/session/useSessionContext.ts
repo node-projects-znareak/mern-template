@@ -14,14 +14,14 @@ export default function useSessionContext() {
     console.log("updating user session...");
     return pendingUpdates ? { ...userFromQuery, ...pendingUpdates } : userFromQuery;
   }, [userFromQuery, pendingUpdates]);
-
+  console.log({ user });
   const hasToken = existsToken();
   const isLoadingSession = isLoading || (hasToken && !user && !isError);
 
   const logout = useCallback(() => {
-    queryClient.cancelQueries({ queryKey: ["userSession"] });
-    queryClient.removeQueries({ queryKey: ["userSession"] });
     queryClient.setQueryData(["userSession"], null);
+    queryClient.removeQueries({ queryKey: ["userSession"] });
+    queryClient.cancelQueries({ queryKey: ["userSession"] });
 
     removeToken();
     setPendingUpdates(null);

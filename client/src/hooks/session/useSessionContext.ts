@@ -6,24 +6,22 @@ import type { User } from "@interfaces/auth";
 
 export default function useSessionContext() {
   const queryClient = useQueryClient();
-
   const { session: userFromQuery, isLoading, isFetching, isError, error } = useSession();
-
   const [pendingUpdates, setPendingUpdates] = useState<Partial<User> | null>(null);
 
   const user = useMemo(() => {
     if (!userFromQuery) return null;
-    
+    console.log("updating user session...");
     return pendingUpdates ? { ...userFromQuery, ...pendingUpdates } : userFromQuery;
   }, [userFromQuery, pendingUpdates]);
 
-  const isAuthenticated = !!user;
   const hasToken = existsToken();
   const isLoadingSession = isLoading || (hasToken && !user && !isError);
 
   const logout = useCallback(() => {
+    queryClient.cancelQueries({ queryKey: ["userSession"] });
     queryClient.removeQueries({ queryKey: ["userSession"] });
-    queryClient.removeQueries({ queryKey: ["user"] });
+    queryClient.setQueryData(["userSession"], null);
 
     removeToken();
     setPendingUpdates(null);
@@ -63,7 +61,6 @@ export default function useSessionContext() {
 
   return {
     user,
-    isAuthenticated,
     isLoadingSession,
     isLoading,
     isFetching,

@@ -1,16 +1,15 @@
 import { Navigate } from "react-router-dom";
 import { ReactNode } from "react";
-import { useSessionContext } from "@context/SessionContext";
-import { existsToken } from "@/utils/token";
+import { useSessionContext } from "@/context/SessionContext";
 
 function PrivateRoute({ children }: { children: ReactNode }) {
-  const { user, isLoading, isError, isReadySession } = useSessionContext();
- 
+  const { user, isError, isLoadingSession } = useSessionContext();
+  
   if (isError) {
     return <Navigate to="/" replace />;
   }
 
-  if (isLoading || !isReadySession && existsToken()) {
+  if (isLoadingSession) {
     return null;
   }
 

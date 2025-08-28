@@ -1,5 +1,5 @@
 import constate from "constate";
-import useSessionContext from "@hooks/useSessionContext";
+import useSessionContext from "@/hooks/session/useSessionContext";
 
 const [SessionProvider, useSessionContextHook] = constate(useSessionContext);
 

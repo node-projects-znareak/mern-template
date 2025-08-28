@@ -3,7 +3,7 @@ import { getSession } from "@/utils/http";
 import { existsToken } from "@/utils/token";
 
 export default function useSession() {
-  const { data: session, ...args } = useQuery({
+  const { data: session = null, ...args } = useQuery({
     queryKey: ["userSession"],
     queryFn: getSession,
     enabled: existsToken(),

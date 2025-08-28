@@ -17,7 +17,6 @@
      * Styles: SASS modules, colocated with components
      * Components: colocated within the feature folder
      * Pages: `pages/<feature>/`
-     * Index file: `index.ts` for exports
      * Public URL files & assets: `/assets`
      * Public URL svg icons: `/assets/icons/`
 

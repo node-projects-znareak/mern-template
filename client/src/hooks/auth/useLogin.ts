@@ -1,31 +1,24 @@
-import { signupUser, parseError } from "@/utils/http";
+import { loginUser, parseError } from "@/utils/http";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { useSessionContext } from "@context/SessionContext";
+import { useSessionContext } from "@/context/SessionContext";
 import { setToken } from "@/utils/token";
-import type { LoginResponse } from "@/types/auth";
+import type { LoginCredentials, LoginResponse } from "@interfaces/auth";
 
-interface SignupCredentials {
-  email: string;
-  password: string;
-  passwordConfirm: string;
-  name: string;
-}
-
-export default function useSignup() {
+export default function useUserLogin() {
   const navigate = useNavigate();
   const { setUser } = useSessionContext();
 
   const mutation = useMutation({
-    mutationFn: (credentials: SignupCredentials) => signupUser(credentials),
+    mutationFn: (credentials: LoginCredentials) => loginUser(credentials),
     onSuccess: (data: LoginResponse) => {
       setUser(data.user);
       setToken(data.token);
-      navigate("/profile");
+      navigate("/");
     },
   });
 
-  const handleSignup = async (values: SignupCredentials) => {
+  const onFinish = async (values: LoginCredentials) => {
     try {
       await mutation.mutateAsync(values);
     } catch (err) {
@@ -33,12 +26,8 @@ export default function useSignup() {
     }
   };
 
-  const onFinish = async (values: SignupCredentials) => {
-    await handleSignup(values);
-  };
 
   return {
-    handleSignup,
     onFinish,
     isLoading: mutation.isPending,
     error: mutation.error ? parseError(mutation.error) : null,

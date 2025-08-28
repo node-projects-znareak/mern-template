@@ -1,31 +1,20 @@
-import useUserLogin from "@/hooks/useLogin";
+import useUserLogin from "@/hooks/auth/useLogin";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input, PasswordInput } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { parseError } from "@/utils/http";
+import { useLoginForm } from "@/hooks/auth/useLoginForm";
 
 const Login = () => {
   const { onFinish, error, isLoading } = useUserLogin();
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const email = (form.email as HTMLInputElement).value.trim();
-    const password = (form.password as HTMLInputElement).value;
-
-    if (!email || !email.includes("@") || !email.includes(".")) {
-      alert("Please enter a valid email");
-      return;
-    }
-
-    if (!password || password.length < 8) {
-      alert("Password must be at least 8 characters");
-      return;
-    }
-
-    onFinish({ email, password });
-  };
+  const {
+    emailError,
+    passwordError,
+    handleEmailChange,
+    handlePasswordChange,
+    handleSubmit,
+  } = useLoginForm();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -42,9 +31,31 @@ const Login = () => {
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
-          <Input type="email" name="email" placeholder="Email" disabled={isLoading} required />
-          <PasswordInput name="password" placeholder="Password" minLength={8} disabled={isLoading} required />
+        <form onSubmit={e => handleSubmit(e, onFinish)} className="space-y-4" autoComplete="off">
+          <div className="space-y-1">
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email"
+              disabled={isLoading}
+              onChange={handleEmailChange}
+            />
+            {!!emailError && (
+              <p className="text-red-500 text-xs mt-1">{emailError}</p>
+            )}
+          </div>
+          <div className="space-y-1">
+            <PasswordInput
+              name="password"
+              placeholder="Password"
+              minLength={8}
+              disabled={isLoading}
+              onChange={handlePasswordChange}
+            />
+            {!!passwordError && (
+              <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+            )}
+          </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Log in"}
@@ -69,5 +80,6 @@ const Login = () => {
     </div>
   );
 };
+
 
 export default Login;

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { useSessionContext } from "@context/SessionContext";
+import { useSessionContext } from "@/context/SessionContext";
 
 const Home = () => {
   const { user, logout } = useSessionContext();

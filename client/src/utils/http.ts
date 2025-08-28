@@ -1,9 +1,9 @@
 import axios from "axios";
-import { ErrorFormat, ResponseData, ResponseFormat } from "@/types/axios";
+import { ErrorFormat, ResponseData, ResponseFormat } from "@interfaces/axios";
 import type { User } from "@interfaces/auth";
-import type { EmailCheckResponse } from "@/types/email";
+import type { EmailCheckResponse } from "@interfaces/email";
 import { getToken, removeToken } from "@/utils/token";
-import { AxiosErrorResponse, ErrorWithData, ErrorWithMessage } from "@/types/error";
+import { AxiosErrorResponse, ErrorWithData, ErrorWithMessage } from "@interfaces/error";
 
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:5000/api",

@@ -1,19 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useSessionContext } from "@context/SessionContext";
+import { useAuthenticatedUser } from "@/hooks/session/useAuthenticatedUser";
 
 const Profile = () => {
-  const { user, logout } = useSessionContext();
+  const { user, logout, updateUser } = useAuthenticatedUser();
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <p className="text-muted-foreground">No user information available</p>
-        </div>
-      </div>
-    );
-  }
+
+
+  const changeUserState = () => {
+    updateUser({
+      name: "chjangename",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -24,6 +22,10 @@ const Profile = () => {
             Log out
           </Button>
         </div>
+
+        <Button onClick={changeUserState} className="mb-4">
+          Change Name
+        </Button>
 
         <Card>
           <CardHeader>
@@ -36,7 +38,7 @@ const Profile = () => {
                   Name
                 </label>
                 <p id="profile-name" className="text-lg">
-                  {user.name || "Not specified"}
+                  {user.name}
                 </p>
               </div>
 

@@ -26,11 +26,11 @@ const loginSchemaValidation = yup.object({
 
 const signupSchemaValidation = yup.object({
   body: yup.object({
-    name: yup
+    username: yup
       .string()
-      .min(4, "Minimum 4 characters for name")
-      .max(100, "Maximum 100 characters for name")
-      .required("Name is required"),
+      .min(4, "Minimum 4 characters for username")
+      .max(100, "Maximum 100 characters for username")
+      .required("Username is required"),
     email: yup
       .string()
       .email("Email must be valid, example: example@domain.com")
@@ -78,10 +78,21 @@ const checkEmailSchemaValidation = yup.object({
   }),
 });
 
+const checkUsernameSchemaValidation = yup.object({
+  query: yup.object({
+    username: yup
+      .string()
+      .min(4, "Minimum 4 characters for username")
+      .max(100, "Maximum 100 characters for username")
+      .required("Username is required"),
+  }),
+});
+
 module.exports = {
   loginSchemaValidation,
   signupSchemaValidation,
   passwordChangeValidation,
   requireIdValidation,
   checkEmailSchemaValidation,
+  checkUsernameSchemaValidation,
 };

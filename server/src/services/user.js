@@ -24,6 +24,11 @@ class UserService {
     return users.length > 0;
   }
 
+  async isUsernameInUse(username) {
+    const users = await this.UserModel.find({ username }).lean();
+    return users.length > 0;
+  }
+
   async getUserById(id) {
     const user = await this.UserModel.findById(id, { password: 0 }).lean();
     return user;

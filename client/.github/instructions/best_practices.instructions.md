@@ -38,6 +38,7 @@
    * Use ESLint + Prettier and TypeScript.
    * Use absolute imports (configured in tsconfig.json).
    * Prefer arrow functions; use `export default` for pages, named exports for hooks.
+   * No barrel files (index.ts)
    * No inline styles; Prioritize Tailwind CSS for styling, if Tailwind is insufficient, use SASS Modules. Only as a last resort, use CSS Modules o CSS files.
    * Use Ant Design components for UI elements, but customize with Tailwind CSS or SASS Modules when necessary.
    * Apply KISS, DRY, SOLID principles.

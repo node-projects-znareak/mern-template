@@ -2,6 +2,7 @@ import axios from "axios";
 import { ErrorFormat, ResponseData, ResponseFormat } from "@interfaces/axios";
 import type { User } from "@interfaces/auth";
 import type { EmailCheckResponse } from "@interfaces/email";
+import type { UsernameCheckResponse } from "@interfaces/username";
 import { getToken, removeToken } from "@/utils/token";
 import { AxiosErrorResponse, ErrorWithData, ErrorWithMessage } from "@interfaces/error";
 
@@ -47,7 +48,7 @@ export const signupUser = async (credentials: {
   email: string;
   password: string;
   passwordConfirm: string;
-  name: string;
+  username: string;
 }) => {
   const { data: response } = await instance.post<ResponseData<{ user: User; token: string }>>(
     "/auth/signup",
@@ -58,6 +59,11 @@ export const signupUser = async (credentials: {
 
 export const checkEmailAvailability = async (email: string) => {
   const { data: response } = await instance.get<ResponseData<EmailCheckResponse>>(`/auth/check-email?email=${encodeURIComponent(email)}`);
+  return response.data;
+};
+
+export const checkUsernameAvailability = async (username: string) => {
+  const { data: response } = await instance.get<ResponseData<UsernameCheckResponse>>(`/auth/check-username?username=${encodeURIComponent(username)}`);
   return response.data;
 };
 

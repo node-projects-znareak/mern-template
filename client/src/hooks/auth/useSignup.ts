@@ -9,7 +9,7 @@ interface SignupCredentials {
   email: string;
   password: string;
   passwordConfirm: string;
-  name: string;
+  username: string;
 }
 
 export default function useSignup() {

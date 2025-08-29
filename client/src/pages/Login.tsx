@@ -4,17 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input, PasswordInput } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { parseError } from "@/utils/http";
-import { useLoginForm } from "@/hooks/auth/useLoginForm";
+import { useLoginForm } from "@/hooks/form/useLoginForm";
 
 const Login = () => {
   const { onFinish, error, isLoading } = useUserLogin();
-  const {
-    emailError,
-    passwordError,
-    handleEmailChange,
-    handlePasswordChange,
-    handleSubmit,
-  } = useLoginForm();
+  const { register, handleSubmit, errors, isSubmitting, isValid } = useLoginForm(onFinish);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -31,34 +25,37 @@ const Login = () => {
           </Alert>
         )}
 
-        <form onSubmit={e => handleSubmit(e, onFinish)} className="space-y-4" autoComplete="off">
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
           <div className="space-y-1">
             <Input
               type="email"
-              name="email"
               placeholder="Email"
-              disabled={isLoading}
-              onChange={handleEmailChange}
+              disabled={isLoading || isSubmitting}
+              {...register("email")}
             />
-            {!!emailError && (
-              <p className="text-red-500 text-xs mt-1">{emailError}</p>
+            {!!errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
             )}
           </div>
+          
           <div className="space-y-1">
             <PasswordInput
-              name="password"
               placeholder="Password"
               minLength={8}
-              disabled={isLoading}
-              onChange={handlePasswordChange}
+              disabled={isLoading || isSubmitting}
+              {...register("password")}
             />
-            {!!passwordError && (
-              <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+            {!!errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
             )}
           </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Log in"}
+          <Button 
+            type="submit" 
+            className="w-full" 
+            disabled={isLoading || isSubmitting || !isValid}
+          >
+            {isLoading || isSubmitting ? "Logging in..." : "Log in"}
           </Button>
 
           <div className="text-center">
@@ -80,6 +77,5 @@ const Login = () => {
     </div>
   );
 };
-
 
 export default Login;

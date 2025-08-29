@@ -13,7 +13,7 @@ function wrapErrors(err, req, res, next) {
   if (!err.isBoom) {
     next(boom.badImplementation(err));
   }
-  // err ya tiene un error tipo Boom
+
   next(err);
 }
 
@@ -23,7 +23,6 @@ function clientErrorHandling(err, req, res, next) {
       https://hapi.dev/module/boom/api/?v=9.1.2
   */
   const { statusCode, payload } = err.output;
-  // catch errors ajax or errors while streaming
   if (isRequestAjaxOrApi(req) || req.headersSent) {
     const response = { ...payload };
     if (IS_PRODUCTION) response.errorDescription = err.message;
@@ -38,7 +37,7 @@ function wrapServerErrors(app) {
   if (typeof app.use !== "function") {
     throw new Error("The `app` param isn't a instace of express ");
   }
-  // insertar los middlewares de errores en el servidor `app`
+
   app.use(logErrors);
   app.use(wrapErrors);
   app.use(clientErrorHandling);

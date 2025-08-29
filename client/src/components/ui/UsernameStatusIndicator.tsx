@@ -1,6 +1,6 @@
 import classNames from "classnames";
 
-interface EmailStatusIndicatorProps {
+interface UsernameStatusIndicatorProps {
   isChecking: boolean;
   message: string;
   hasError: boolean;
@@ -8,18 +8,18 @@ interface EmailStatusIndicatorProps {
   isNetworkError: boolean;
 }
 
-export const EmailStatusIndicator = ({ 
+export const UsernameStatusIndicator = ({ 
   isChecking, 
   message,
   hasError,
   hasSuccess,
   isNetworkError
-}: EmailStatusIndicatorProps) => {
+}: UsernameStatusIndicatorProps) => {
   if (isChecking) {
     return (
       <div className={classNames("text-xs text-blue-600 flex items-center gap-1 mt-1")}>
         <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <span>Checking email availability...</span>
+        <span>Checking username availability...</span>
       </div>
     );
   }

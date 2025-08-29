@@ -23,14 +23,14 @@ class AuthController {
 
   async signup(req, res, next) {
     try {
-      const { email, password, name } = req.body;
+      const { email, password, username } = req.body;
       const user = await UserService.existsUser(email);
       
       if (user) return error(res, "Email is already in use");
 
       const passwordHashed = hashPassword(password);
       const userCreated = await UserService.createUser({
-        name,
+        username,
         email,
         password: passwordHashed,
       });
@@ -45,10 +45,25 @@ class AuthController {
   async checkEmailAvailability(req, res, next) {
     try {
       const { email } = req.query;
-      const isInUse = await UserService.isEmailInUse(email);
+      const isInUse = await UserService.existsUser(email);
       
       return success(res, { 
         email,
+        available: !isInUse,
+        inUse: isInUse
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async checkUsernameAvailability(req, res, next) {
+    try {
+      const { username } = req.query;
+      const isInUse = await UserService.isUsernameInUse(username);
+      
+      return success(res, { 
+        username,
         available: !isInUse,
         inUse: isInUse
       });

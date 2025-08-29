@@ -1,4 +1,5 @@
 const { validationError } = require("@helpers/httpResponses");
+const { formatSchemaError } = require("@helpers/index");
 
 /**
  * Validate the payload with Yup
@@ -21,7 +22,12 @@ module.exports = function validate(schema) {
 
       next();
     } catch (err) {
-      validationError(res, err);
+      const formattedErrors = formatSchemaError(err);
+      validationError(res, {
+        name: "Validation Error",
+        errors: formattedErrors,
+        message: "Validation failed"
+      });
     }
   };
 };

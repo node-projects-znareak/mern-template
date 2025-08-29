@@ -9,7 +9,7 @@ const Profile = () => {
 
   const changeUserState = () => {
     updateUser({
-      name: "chjangename",
+      username: "changeusernamse",
     });
   };
 
@@ -24,7 +24,7 @@ const Profile = () => {
         </div>
 
         <Button onClick={changeUserState} className="mb-4">
-          Change Name
+          Change Username
         </Button>
 
         <Card>
@@ -34,11 +34,11 @@ const Profile = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="profile-name" className="text-sm font-medium text-muted-foreground">
-                  Name
+                <label htmlFor="profile-username" className="text-sm font-medium text-muted-foreground">
+                  Username
                 </label>
-                <p id="profile-name" className="text-lg">
-                  {user.name}
+                <p id="profile-username" className="text-lg">
+                  {user.username}
                 </p>
               </div>
 

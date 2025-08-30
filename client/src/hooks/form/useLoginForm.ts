@@ -11,7 +11,7 @@ export const useLoginForm = (onSubmit: (data: LoginFormData) => void) => {
     watch,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    mode: "onBlur", // Valida cuando el usuario sale del campo
+    mode: "onBlur",
     defaultValues: {
       email: "",
       password: "",

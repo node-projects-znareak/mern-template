@@ -7,7 +7,7 @@ import { EmailStatusIndicator } from "@/components/ui/EmailStatusIndicator";
 import { UsernameStatusIndicator } from "@/components/ui/UsernameStatusIndicator";
 import { PasswordRequirementsTooltip } from "@/components/ui/PasswordRequirementsTooltip";
 import useSignup from "@/hooks/auth/useSignup";
-import { useRegisterFormWithValidation } from "@/hooks/form/useRegisterFormWithValidation";
+import { useSignupForm } from "@/hooks/form/useSignupForm";
 import { parseError } from "@/utils/http";
 import { getPasswordStrength } from "@/utils/helpers";
 
@@ -37,7 +37,7 @@ const Register = () => {
       hasUsernameSuccess,
       isUsernameNetworkError,
     },
-  } = useRegisterFormWithValidation(onFinish);
+  } = useSignupForm(onFinish);
 
   const strength = getPasswordStrength(password);
 
@@ -60,7 +60,7 @@ const Register = () => {
             <Input
               type="text"
               placeholder="Username"
-              disabled={isLoading || isSubmitting}
+              disabled={isLoading || isSubmitting || isCheckingUsername}
               {...register("username")}
               onBlur={handleUsernameBlur}
               className={classNames({
@@ -86,7 +86,7 @@ const Register = () => {
             <Input
               type="email"
               placeholder="Email"
-              disabled={isLoading || isSubmitting}
+              disabled={isLoading || isSubmitting || isCheckingEmail}
               {...register("email")}
               onBlur={handleEmailBlur}
               className={classNames({

@@ -20,7 +20,8 @@ const Register = () => {
     errors,
     isSubmitting,
     isFormReady,
-    formValues: { email, username, password },
+    shouldShowValidationMessage,
+    formValues: { password },
     emailValidation: {
       handleEmailBlur,
       isCheckingEmail,
@@ -176,14 +177,11 @@ const Register = () => {
             {isLoading || isSubmitting ? "Signing up..." : "Sign up"}
           </Button>
 
-          {(!isFormReady && !isLoading && !isSubmitting && (!!email || !!username)) && (
+          {shouldShowValidationMessage && !isLoading && !isSubmitting ? (
             <div className="text-xs text-red-500 text-center -mt-3 font-medium">
-              {(!hasEmailSuccess && email) || (!hasUsernameSuccess && username) ? 
-                "Please verify that the email and username are available before continuing" : 
-                "Complete all fields correctly to continue"
-              }
+              Please verify that the email and username are available before continuing
             </div>
-          )}
+          ) : null}
 
           <div className="text-center">
             <p className="text-sm text-muted-foreground">

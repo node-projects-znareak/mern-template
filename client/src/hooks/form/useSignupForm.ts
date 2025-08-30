@@ -73,25 +73,27 @@ export function useSignupForm(onSubmit: (data: RegisterFormData) => Promise<void
   const hasEmailError = !!errors.email || (emailData && !emailData.available) || !!emailError;
   const hasEmailSuccess = emailData?.available === true;
 
-  const emailMessage = emailData?.available === false 
-    ? "This email is already registered" 
-    : emailData?.available === true
-    ? "Email is available"
-    : emailError 
-    ? "Unable to verify email availability" 
-    : "";
+  const emailMessage =
+    emailData?.available === false
+      ? "This email is already registered"
+      : emailData?.available === true
+      ? "Email is available"
+      : emailError
+      ? "Unable to verify email availability"
+      : "";
   const isEmailNetworkError = !!emailError;
 
   const hasUsernameError = !!errors.username || (usernameData && !usernameData.available) || !!usernameError;
   const hasUsernameSuccess = usernameData?.available === true;
 
-  const usernameMessage = usernameData?.available === false 
-    ? "This username is already taken" 
-    : usernameData?.available === true
-    ? "Username is available"
-    : usernameError 
-    ? "Unable to verify username availability" 
-    : "";
+  const usernameMessage =
+    usernameData?.available === false
+      ? "This username is already taken"
+      : usernameData?.available === true
+      ? "Username is available"
+      : usernameError
+      ? "Unable to verify username availability"
+      : "";
   const isUsernameNetworkError = !!usernameError;
 
   const handleEmailBlur = useCallback(() => {
@@ -103,6 +105,14 @@ export function useSignupForm(onSubmit: (data: RegisterFormData) => Promise<void
   }, []);
 
   const isFormReady = isValid && hasEmailSuccess && hasUsernameSuccess;
+
+  const hasSpecificValidationErrors =
+    (hasEmailError && !isEmailNetworkError && emailMessage.includes("already registered")) ||
+    (hasUsernameError && !isUsernameNetworkError && usernameMessage.includes("already taken")) ||
+    isEmailNetworkError ||
+    isUsernameNetworkError;
+
+  const shouldShowValidationMessage = hasSpecificValidationErrors;
 
   const handleFormSubmit = handleSubmit(async (data) => {
     try {
@@ -123,6 +133,7 @@ export function useSignupForm(onSubmit: (data: RegisterFormData) => Promise<void
     isSubmitting,
     isValid,
     isFormReady,
+    shouldShowValidationMessage,
 
     formValues: {
       email,

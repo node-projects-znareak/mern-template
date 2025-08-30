@@ -125,7 +125,6 @@ function formatSchemaError(err) {
     return [err.message];
   }
 
-  // Collect all errors into an array
   const errorMessages = [];
   if (err.inner && err.inner.length > 0) {
     err.inner.forEach((innerErr) => {

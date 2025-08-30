@@ -5,7 +5,6 @@ const UserSchema = new Schema(
       type: String,
       required: [true, "Email is required"],
       maxLength: 100,
-      unique: true,
       trim: true,
     },
     password: {
@@ -19,11 +18,13 @@ const UserSchema = new Schema(
       required: [true, "Username is required"],
       minLength: 4,
       maxLength: 100,
-      unique: true,
       trim: true,
     },
   },
   { timestamps: true }
 );
+
+UserSchema.index({ email: 1 }, { unique: true });
+UserSchema.index({ username: 1 }, { unique: true });
 
 module.exports = model("User", UserSchema);

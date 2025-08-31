@@ -25,6 +25,7 @@ const Register = () => {
     emailValidation: {
       handleEmailBlur,
       isCheckingEmail,
+      isFetchingEmail,
       emailMessage,
       hasEmailError,
       hasEmailSuccess,
@@ -33,6 +34,7 @@ const Register = () => {
     usernameValidation: {
       handleUsernameBlur,
       isCheckingUsername,
+      isFetchingUsername,
       usernameMessage,
       hasUsernameError,
       hasUsernameSuccess,
@@ -61,7 +63,7 @@ const Register = () => {
             <Input
               type="text"
               placeholder="Username"
-              disabled={isLoading || isSubmitting || isCheckingUsername}
+              disabled={isLoading || isSubmitting || isCheckingUsername || isFetchingUsername}
               {...register("username")}
               onBlur={handleUsernameBlur}
               className={classNames({
@@ -70,15 +72,13 @@ const Register = () => {
               })}
             />
 
-            {!!errors.username && (
-              <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>
-            )}
+            {!!errors.username && <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>}
 
             <UsernameStatusIndicator
-              isChecking={isCheckingUsername}
+              isChecking={isCheckingUsername || isFetchingUsername}
               message={usernameMessage}
               hasError={hasUsernameError ?? false}
-              hasSuccess={hasUsernameSuccess}
+              hasSuccess={!!hasUsernameSuccess && !hasUsernameError && !isUsernameNetworkError}
               isNetworkError={isUsernameNetworkError}
             />
           </div>
@@ -87,7 +87,7 @@ const Register = () => {
             <Input
               type="email"
               placeholder="Email"
-              disabled={isLoading || isSubmitting || isCheckingEmail}
+              disabled={isLoading || isSubmitting || isCheckingEmail || isFetchingEmail}
               {...register("email")}
               onBlur={handleEmailBlur}
               className={classNames({
@@ -96,12 +96,10 @@ const Register = () => {
               })}
             />
 
-            {!!errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-            )}
+            {!!errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
 
             <EmailStatusIndicator
-              isChecking={isCheckingEmail}
+              isChecking={isCheckingEmail || isFetchingEmail}
               message={emailMessage}
               hasError={hasEmailError ?? false}
               hasSuccess={hasEmailSuccess}
@@ -120,16 +118,14 @@ const Register = () => {
                   "border-red-500 focus:border-red-500": !!errors.password,
                 })}
               />
-              
+
               <div className="absolute right-8 top-1/2 mt-0.5 transform -translate-y-1/2">
                 <PasswordRequirementsTooltip password={password} />
               </div>
             </div>
 
-            {!!errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-            )}
-            
+            {!!errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+
             <div className="h-2 w-full rounded bg-muted">
               <div
                 className={classNames("h-2 rounded transition-all duration-300", strength.color)}
@@ -169,11 +165,7 @@ const Register = () => {
             )}
           </div>
 
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isLoading || isSubmitting || !isFormReady}
-          >
+          <Button type="submit" className="w-full" disabled={isLoading || isSubmitting || !isFormReady}>
             {isLoading || isSubmitting ? "Signing up..." : "Sign up"}
           </Button>
 

@@ -34,23 +34,10 @@ export function useSignupForm(onSubmit: (data: RegisterFormData) => Promise<void
   const [debouncedEmail, setDebouncedEmail] = useState("");
   const [debouncedUsername, setDebouncedUsername] = useState("");
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedEmail(email);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [email]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedUsername(username);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [username]);
-
   const {
     data: emailData,
     isLoading: isCheckingEmail,
+    isFetching: isFetchingEmail,
     error: emailError,
   } = useQuery<EmailCheckResponse>({
     queryKey: ["checkEmail", debouncedEmail],
@@ -62,6 +49,7 @@ export function useSignupForm(onSubmit: (data: RegisterFormData) => Promise<void
   const {
     data: usernameData,
     isLoading: isCheckingUsername,
+    isFetching: isFetchingUsername,
     error: usernameError,
   } = useQuery<UsernameCheckResponse>({
     queryKey: ["checkUsername", debouncedUsername],
@@ -71,38 +59,58 @@ export function useSignupForm(onSubmit: (data: RegisterFormData) => Promise<void
   });
 
   const hasEmailError = !!errors.email || (emailData && !emailData.available) || !!emailError;
-  const hasEmailSuccess = emailData?.available === true;
+  const hasEmailSuccess = emailData?.available === true && !emailError;
 
   const emailMessage =
-    emailData?.available === false
+    emailError
+      ? "Unable to verify email availability"
+      : emailData?.available === false
       ? "This email is already registered"
       : emailData?.available === true
       ? "Email is available"
-      : emailError
-      ? "Unable to verify email availability"
       : "";
   const isEmailNetworkError = !!emailError;
 
   const hasUsernameError = !!errors.username || (usernameData && !usernameData.available) || !!usernameError;
-  const hasUsernameSuccess = usernameData?.available === true;
+  const hasUsernameSuccess = usernameData?.available === true && !usernameError;
 
   const usernameMessage =
-    usernameData?.available === false
+    usernameError
+      ? "Unable to verify username availability"
+      : usernameData?.available === false
       ? "This username is already taken"
       : usernameData?.available === true
       ? "Username is available"
-      : usernameError
-      ? "Unable to verify username availability"
       : "";
   const isUsernameNetworkError = !!usernameError;
 
   const handleEmailBlur = useCallback(() => {
-    // Blur handler can be used for additional logic if needed
-  }, []);
+    if (email && email.includes("@") && !errors.email) {
+      setDebouncedEmail(email);
+    } else if (!email) {
+      setDebouncedEmail("");
+    }
+  }, [email, errors.email]);
 
   const handleUsernameBlur = useCallback(() => {
-    // Blur handler can be used for additional logic if needed
-  }, []);
+    if (username && username.length >= 3 && !errors.username) {
+      setDebouncedUsername(username);
+    } else if (!username) {
+      setDebouncedUsername("");
+    }
+  }, [username, errors.username]);
+
+  useEffect(() => {
+    if (!email) {
+      setDebouncedEmail("");
+    }
+  }, [email]);
+
+  useEffect(() => {
+    if (!username) {
+      setDebouncedUsername("");
+    }
+  }, [username]);
 
   const isFormReady = isValid && hasEmailSuccess && hasUsernameSuccess;
 
@@ -145,6 +153,7 @@ export function useSignupForm(onSubmit: (data: RegisterFormData) => Promise<void
     emailValidation: {
       handleEmailBlur,
       isCheckingEmail,
+     isFetchingEmail,
       emailMessage,
       hasEmailError,
       hasEmailSuccess,
@@ -154,6 +163,7 @@ export function useSignupForm(onSubmit: (data: RegisterFormData) => Promise<void
     usernameValidation: {
       handleUsernameBlur,
       isCheckingUsername,
+      isFetchingUsername,
       usernameMessage,
       hasUsernameError,
       hasUsernameSuccess,

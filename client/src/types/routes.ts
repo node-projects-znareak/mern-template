@@ -1,11 +1,12 @@
 import { RouteProps as OriginalRouteProps } from "react-router-dom";
 import { ComponentType, ReactNode } from "react";
 
-export type RouteProps = {
+export type RouteProps = Omit<OriginalRouteProps, "element" | "children"> & {
   private?: boolean;
   redirect?: boolean;
   public?: boolean;
-} & OriginalRouteProps;
+  redirectTo?: string;
+};
 
 export interface LazyComponentProps {
   component: ComponentType;

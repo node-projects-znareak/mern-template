@@ -1,0 +1,16 @@
+node_modules
+dist
+coverage
+.env
+.env.*
+*.log
+.git
+.agents
+.husky
+uploads
+*.zip
+eslint.config.mjs
+.prettierrc
+.prettierignore
+nodemon.json
+README.md

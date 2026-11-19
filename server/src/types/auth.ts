@@ -17,9 +17,3 @@ export interface EmailAvailabilityResult {
   readonly available: boolean;
   readonly inUse: boolean;
 }
-
-export interface UserJwtPayload {
-  readonly _id: string;
-  readonly email: string;
-  readonly name: string;
-}

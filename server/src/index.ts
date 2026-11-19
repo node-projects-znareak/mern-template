@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import startServer from "@config/server";
-import { API, HOST } from "@config/variables";
+import { API, HOST, TRUST_PROXY } from "@config/variables";
 import { setupGlobalLogging } from "@helpers/logger";
 import {
   COMPRESSION_MIDDLEWARE,
@@ -41,7 +41,7 @@ if (API.ENVIROMENT === "development") {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
 
-app.set("trust proxy", API.ENVIROMENT === "production" ? 1 : 0);
+app.set("trust proxy", TRUST_PROXY ? 1 : 0);
 
 app.use(COMPRESSION_MIDDLEWARE);
 app.use(express.static("./uploads", { dotfiles: "deny", index: false, maxAge: "1d" }));
@@ -57,7 +57,7 @@ void startServer(app, routes).then((activePort) => {
   if (swaggerDocument !== null) {
     swaggerDocument.servers = [
       {
-        url: `http://${HOST ?? "localhost"}:${activePort}`,
+        url: `${API.IS_HTTPS ? "https" : "http"}://${HOST ?? "localhost"}:${activePort}`,
         description: "Servidor de desarrollo",
       },
     ];

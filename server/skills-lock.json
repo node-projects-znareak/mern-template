@@ -1,6 +1,20 @@
 {
   "version": 2,
   "skills": {
+    "jwt-oauth-token-attacks": {
+      "source": "yaklang/hack-skills",
+      "commit": "6fbf0bc8d5c71830d62543a308d8744606c43d7c",
+      "sourceType": "github",
+      "skillPath": "skills/jwt-oauth-token-attacks/SKILL.md",
+      "computedHash": "1f07c251f5a1ea4cdd21ee113614bcf26c080816e309b559945183eb914269bf"
+    },
+    "jwt-security-review": {
+      "source": "securityskills/skills",
+      "commit": "b2b6b5200ee91a249816df209a0b89ff01ae450a",
+      "sourceType": "github",
+      "skillPath": "web-appsec/auth/jwt-security-review/SKILL.md",
+      "computedHash": "2d48dd42eadba071a3b9b7cef3e1b8b2fa47c952de035bc9f9d94a68dce90dc6"
+    },
     "mongodb-connection": {
       "source": "mongodb/agent-skills",
       "commit": "ff9a88211c5a9fa74012bfa8b797132d510f9b44",

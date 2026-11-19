@@ -8,12 +8,16 @@ const UserSchema = new Schema(
       maxlength: 100,
       unique: true,
       trim: true,
+      lowercase: true,
     },
     password: {
       type: String,
       minlength: 6,
       maxlength: 200,
       required: [true, "Password is required"],
+    },
+    passwordChangedAt: {
+      type: Date,
     },
     name: {
       type: String,

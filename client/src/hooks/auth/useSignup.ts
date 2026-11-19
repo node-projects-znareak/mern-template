@@ -1,8 +1,6 @@
 import { signupUser, parseError } from "@/utils/http";
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useSessionContext } from "@/context/SessionContext";
-import { setToken } from "@/utils/token";
 import type { LoginResponse } from "@interfaces/auth";
 
 interface SignupCredentials {
@@ -13,15 +11,14 @@ interface SignupCredentials {
 }
 
 export default function useSignup() {
-  const navigate = useNavigate();
   const { setUser } = useSessionContext();
 
   const mutation = useMutation({
     mutationFn: (credentials: SignupCredentials) => signupUser(credentials),
+    // Sin navigate() aquí: la redirección a /profile la hace RedirectRoute
+    // (config/routes.ts) al detectar el usuario, evitando la carrera.
     onSuccess: (data: LoginResponse) => {
       setUser(data.user);
-      setToken(data.token);
-      navigate("/profile");
     },
   });
 

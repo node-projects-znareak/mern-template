@@ -2,7 +2,6 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
     "target": "ES2022",
-    "baseUrl": ".",
     "lib": ["ES2023", "es6", "dom"],
     "module": "ESNext",
     "skipLibCheck": true,
@@ -40,5 +39,13 @@
       "@context/*": ["./src/context/*"]
     }
   },
-  "include": ["src", "vite.config.ts", "eslint.config.js", "postcss.config.js", "tailwind.config.js", "**/*.ts", "**/*.tsx"]
+  "include": [
+    "src",
+    "vite.config.ts",
+    "eslint.config.js",
+    "postcss.config.js",
+    "tailwind.config.js",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

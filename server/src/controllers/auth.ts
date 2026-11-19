@@ -1,5 +1,9 @@
+import { clearAuthCookies, REFRESH_TOKEN_COOKIE, setAuthCookies } from "@helpers/cookies";
 import { error, success } from "@helpers/httpResponses";
-import { createUserJwt, hashPassword, isInvalidPassword, toUserJwtPayload } from "@helpers/index";
+import { toUserId } from "@helpers/id";
+import { isLoginPasswordInvalid, isMongoDuplicateKeyError } from "@helpers/index";
+import { hashPassword } from "@helpers/password";
+import TokenService from "@services/token";
 import UserService from "@services/user";
 import type { NextFunction, Request, Response } from "express";
 
@@ -11,20 +15,22 @@ class AuthController {
       const { email, password } = req.body as LoginInput;
       const user = await UserService.existsUser(email);
 
-      if (!user) {
+      // Compara siempre (con hash dummy si no hay usuario) para no filtrar existencia por timing
+      if (await isLoginPasswordInvalid(user?.password ?? null, password)) {
         error(res, "Invalid username or password");
         return;
       }
 
-      if (isInvalidPassword(password, user.password)) {
+      if (!user) {
         error(res, "Invalid username or password");
         return;
       }
 
       const { password: _password, ...publicUser } = user;
       void _password;
-      const token = createUserJwt(toUserJwtPayload(publicUser));
-      success(res, { user: publicUser, token });
+      const tokens = await TokenService.issueTokenPair(toUserId(String(user._id)));
+      setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+      success(res, { user: publicUser });
     } catch (err) {
       next(err);
     }
@@ -36,19 +42,72 @@ class AuthController {
       const isInUse = await UserService.isEmailInUse(email);
 
       if (isInUse) {
-        error(res, "Email is already in use");
+        error(res, "Email is already in use", 409);
         return;
       }
 
-      const passwordHashed = hashPassword(password);
+      const passwordHashed = await hashPassword(password);
       const userCreated = await UserService.createUser({
         name,
         email,
         password: passwordHashed,
       });
 
-      const token = createUserJwt(toUserJwtPayload(userCreated));
-      success(res, { user: userCreated, token }, 201);
+      const tokens = await TokenService.issueTokenPair(toUserId(String(userCreated._id)));
+      setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+      success(res, { user: userCreated }, 201);
+    } catch (err) {
+      if (isMongoDuplicateKeyError(err)) {
+        error(res, "Email is already in use", 409);
+        return;
+      }
+      next(err);
+    }
+  }
+
+  async refresh(this: void, req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE] as string | undefined;
+
+      if (!refreshToken) {
+        clearAuthCookies(res);
+        error(res, "No refresh token provided", 401);
+        return;
+      }
+
+      const session = await TokenService.rotateRefreshToken(refreshToken);
+
+      if (!session) {
+        clearAuthCookies(res);
+        error(res, "Invalid or expired refresh token", 401);
+        return;
+      }
+
+      const user = await UserService.getUserById(session.userId);
+
+      if (!user) {
+        clearAuthCookies(res);
+        error(res, "The user does not exist, please try again", 401);
+        return;
+      }
+
+      setAuthCookies(res, session.tokens.accessToken, session.tokens.refreshToken);
+      success(res, { user });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async logout(this: void, req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE] as string | undefined;
+
+      if (refreshToken) {
+        await TokenService.revokeRefreshToken(refreshToken);
+      }
+
+      clearAuthCookies(res);
+      success(res, "Logged out");
     } catch (err) {
       next(err);
     }

@@ -5,7 +5,22 @@ import type { Environment } from "../types/env";
 
 const env = envSchema.parse(process.env);
 
-export const { ENVIROMENT, HOST, PORT, JWT_SECRET_TOKEN, JWT_SALT_TOKEN } = env;
+export const {
+  DUMMY_PASSWORD,
+  ENVIROMENT,
+  HOST,
+  PORT,
+  JWT_SECRET_TOKEN,
+  JWT_SALT_TOKEN,
+  ACCESS_TOKEN_EXPIRES_IN,
+} = env;
+
+export const TRUST_PROXY: boolean = env.TRUST_PROXY === "true";
+
+export const HTTPS_CERT_PATH: string = env.HTTPS_CERT_PATH;
+export const HTTPS_KEY_PATH: string = env.HTTPS_KEY_PATH;
+
+export const IS_HTTPS: boolean = HTTPS_CERT_PATH.length > 0 && HTTPS_KEY_PATH.length > 0;
 
 export const IS_PRODUCTION: boolean = ENVIROMENT === "production";
 
@@ -20,13 +35,14 @@ export const RATE_LIMITS = {
 
 export const AUTH_RATE_LIMITS = {
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 30,
 } satisfies Partial<RateLimitOptions>;
 
 export const API = {
   MONGO_DB_URL,
   JWT_SECRET_TOKEN: env.JWT_SECRET_TOKEN,
   IS_PRODUCTION,
+  IS_HTTPS,
   ENVIROMENT,
   CORS_ALLOWED_DOMAINS: env.CORS_ALLOWED_DOMAINS,
   RATE_LIMITS,
@@ -36,6 +52,7 @@ export const API = {
   MONGO_DB_URL: string;
   JWT_SECRET_TOKEN: string;
   IS_PRODUCTION: boolean;
+  IS_HTTPS: boolean;
   ENVIROMENT: Environment;
   CORS_ALLOWED_DOMAINS: string[];
   RATE_LIMITS: Partial<RateLimitOptions>;

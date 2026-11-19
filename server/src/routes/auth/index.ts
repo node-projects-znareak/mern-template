@@ -15,6 +15,8 @@ const authRateLimiter = rateLimit(AUTH_RATE_LIMITS);
 
 router.post("/login", authRateLimiter, validate(loginSchemaValidation), authController.login);
 router.post("/signup", authRateLimiter, validate(signupSchemaValidation), authController.signup);
+router.post("/refresh", authController.refresh);
+router.post("/logout", authController.logout);
 router.get(
   "/check-email",
   validate(checkEmailSchemaValidation),

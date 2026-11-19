@@ -14,7 +14,8 @@ const routers: ReturnType<typeof route>[] = [
 
   redirectRoute(
     lazy(() => import("@pages/Register")),
-    "/register"
+    "/register",
+    { redirectTo: "/profile" }
   ),
 
   privateRoute(

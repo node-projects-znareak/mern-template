@@ -1,6 +1,7 @@
 import { API } from "@config/variables";
 import { logger } from "@helpers/logger";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type RequestHandler } from "express";
 import rateLimit from "express-rate-limit";
@@ -11,6 +12,7 @@ import hpp from "hpp";
 export const COMPRESSION_MIDDLEWARE: RequestHandler = compression();
 
 export const PARSING_MIDDLEWARES: RequestHandler[] = [
+  cookieParser(),
   express.json({ limit: "100kb" }),
   express.urlencoded({ extended: true, limit: "100kb" }),
 ];

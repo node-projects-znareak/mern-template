@@ -7,12 +7,7 @@ import type { ChangePasswordInput } from "../types/auth";
 class UserController {
   async changePassword(this: void, req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { password, passwordConfirm } = req.body as ChangePasswordInput;
-
-      if (password !== passwordConfirm) {
-        error(res, "Passwords do not match", 400);
-        return;
-      }
+      const { password } = req.body as ChangePasswordInput;
 
       const session = req.session;
 

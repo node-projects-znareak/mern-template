@@ -1,63 +1,55 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { existsToken, removeToken } from "@/utils/token";
+import { broadcastSession, subscribeToSession } from "@/utils/sessionChannel";
+import { logoutUser } from "@/utils/http";
 import useSession from "./useSession";
 import type { User } from "@interfaces/auth";
 
 export default function useSessionContext() {
   const queryClient = useQueryClient();
   const { session: userFromQuery, isLoading, isFetching, isError, error } = useSession();
-  const [pendingUpdates, setPendingUpdates] = useState<Partial<User> | null>(null);
 
-  const user = useMemo(() => {
-    if (!userFromQuery) return null;
-    console.log("updating user session...");
-    return pendingUpdates ? { ...userFromQuery, ...pendingUpdates } : userFromQuery;
-  }, [userFromQuery, pendingUpdates]);
-  console.log({ user });
-  const hasToken = existsToken();
-  const isLoadingSession = isLoading || (hasToken && !user && !isError);
+  const user = userFromQuery ?? null;
+  const isLoadingSession = isLoading;
 
-  const logout = useCallback(() => {
+  useEffect(() => {
+    const unsubscribe = subscribeToSession((message) => {
+      if (message.type === "logout") {
+        queryClient.cancelQueries({ queryKey: ["userSession"] });
+        queryClient.setQueryData(["userSession"], null);
+        return;
+      }
+
+      queryClient.setQueryData(["userSession"], message.user);
+    });
+
+    return unsubscribe;
+  }, [queryClient]);
+
+  const logout = useCallback(async () => {
     queryClient.setQueryData(["userSession"], null);
-    queryClient.removeQueries({ queryKey: ["userSession"] });
-    queryClient.cancelQueries({ queryKey: ["userSession"] });
-
-    removeToken();
-    setPendingUpdates(null);
+    broadcastSession({ type: "logout" });
+    try {
+      await logoutUser();
+    } catch (err) {
+      console.error("No se pudo cerrar la sesión en el servidor:", err);
+    }
   }, [queryClient]);
 
   const setUser = useCallback(
     (userData: User | null) => {
       queryClient.setQueryData(["userSession"], userData);
-      setPendingUpdates(null);
+      broadcastSession(userData ? { type: "login", user: userData } : { type: "logout" });
     },
     [queryClient]
   );
 
   const updateUser = useCallback(
     (updates: Partial<User>) => {
-      if (!userFromQuery) return;
-
-      setPendingUpdates((prev) => ({ ...prev, ...updates }));
-
-      const updatedUser = { ...userFromQuery, ...updates };
-      queryClient.setQueryData(["userSession"], updatedUser);
+      queryClient.setQueryData<User>(["userSession"], (current) => (current ? { ...current, ...updates } : current));
     },
-    [queryClient, userFromQuery]
+    [queryClient]
   );
-
-  useEffect(() => {
-    if (isError && hasToken) {
-      logout();
-    }
-  }, [isError, hasToken, logout, error]);
-
-  useEffect(() => {
-    if (userFromQuery) {
-      setPendingUpdates(null);
-    }
-  }, [userFromQuery]);
 
   return {
     user,
@@ -69,7 +61,6 @@ export default function useSessionContext() {
     setUser,
     updateUser,
     logout,
-    hasToken,
     rawUserData: userFromQuery,
   };
 }

@@ -1,0 +1,24 @@
+{
+  "restartable": "rs",
+  "verbose": false,
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "logs",
+    "*.log",
+    ".git",
+    ".github",
+    ".husky",
+    "test",
+    "tests",
+    ".env",
+    ".env.*",
+    ".prettierrc",
+    ".prettierignore"
+  ],
+  "delay": 300,
+  "exec": "tsx --env-file=.env ./src/index.ts"
+}

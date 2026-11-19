@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "skills": {
+    "mongodb-connection": {
+      "source": "mongodb/agent-skills",
+      "commit": "ff9a88211c5a9fa74012bfa8b797132d510f9b44",
+      "sourceType": "github",
+      "skillPath": "skills/mongodb-connection/SKILL.md",
+      "computedHash": "448e267d2b0802eef24b2fdda250d5e2f4ab181033d2861c043cc347be41d448"
+    },
+    "mongodb-query-optimizer": {
+      "source": "mongodb/agent-skills",
+      "commit": "ff9a88211c5a9fa74012bfa8b797132d510f9b44",
+      "sourceType": "github",
+      "skillPath": "skills/mongodb-query-optimizer/SKILL.md",
+      "computedHash": "d5dc8d678a0721169463da65987eb76e117dcbaba4718e607d45822838c9b58b"
+    },
+    "nodejs-backend-patterns": {
+      "source": "wshobson/agents",
+      "commit": "42203085cfc5736204bf0f6d436dff7e1da0bf3f",
+      "sourceType": "github",
+      "skillPath": "plugins/javascript-typescript/skills/nodejs-backend-patterns/SKILL.md",
+      "computedHash": "e478380e9c9d245d0c4caf6574d00934aca71fc62101e571262cdd26f958f4f1"
+    },
+    "nodejs-express-server": {
+      "source": "aj-geddes/useful-ai-prompts",
+      "commit": "3f5182cfd739fc113f4af5244a1cf342ad7f7911",
+      "sourceType": "github",
+      "skillPath": "skills/nodejs-express-server/SKILL.md",
+      "computedHash": "fe3e3849bfac7f8f67630ba4f38e5dd9ac36faf564e3451be291c02e269ace27"
+    },
+    "typescript-advanced-types": {
+      "source": "wshobson/agents",
+      "commit": "42203085cfc5736204bf0f6d436dff7e1da0bf3f",
+      "sourceType": "github",
+      "skillPath": "plugins/javascript-typescript/skills/typescript-advanced-types/SKILL.md",
+      "computedHash": "34c5b3863fde1fc85981ac583ecaf0140471b374d0b7002ac5bc0bea2cf38b24"
+    },
+    "typescript-pro": {
+      "source": "Jeffallan/claude-skills",
+      "commit": "67c1961b180dc92cf08983344627109e983e8f51",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-pro/SKILL.md",
+      "computedHash": "fe899357ff4715b37942c73cc54a0789ee701ff25d8c7fbca9d58a13d38eed81"
+    },
+    "typescript-variables": {
+      "source": "mkosir/typescript-style-guide",
+      "commit": "170074a0df9b07f4a4a78e3596ec1edf06a14da7",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-variables/SKILL.md",
+      "computedHash": "f43818b36a0db6457b4cf06df4acb056e2d981f70d741b5e320297a0c0168cf8"
+    }
+  }
+}

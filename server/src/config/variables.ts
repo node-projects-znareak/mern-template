@@ -20,6 +20,8 @@ export const TRUST_PROXY: boolean = env.TRUST_PROXY === "true";
 export const HTTPS_CERT_PATH: string = env.HTTPS_CERT_PATH;
 export const HTTPS_KEY_PATH: string = env.HTTPS_KEY_PATH;
 
+export const COOKIE_DOMAIN: string = env.COOKIE_DOMAIN;
+
 export const IS_HTTPS: boolean = HTTPS_CERT_PATH.length > 0 && HTTPS_KEY_PATH.length > 0;
 
 export const IS_PRODUCTION: boolean = ENVIROMENT === "production";

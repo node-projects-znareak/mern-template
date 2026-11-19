@@ -31,6 +31,11 @@ export const envSchema = z.object({
   HTTPS_CERT_PATH: z.string().optional().default(""),
   HTTPS_KEY_PATH: z.string().optional().default(""),
 
+  // Opcional: dominio padre compartido (p. ej. ".example.com") cuando frontend y API
+  // viven en subdominios del mismo sitio (app.example.com + api.example.com).
+  // Permite que la bandera session_present sea visible desde el frontend.
+  COOKIE_DOMAIN: z.string().optional().default(""),
+
   MONGO_DB_URI_DEVELOPMENT: z.url(),
   MONGO_DB_URI_PRODUCTION: z.url(),
 });

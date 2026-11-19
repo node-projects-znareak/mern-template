@@ -265,6 +265,28 @@ pnpm build
 
 The API ships with a multi-stage `Dockerfile` and a `docker-compose.yml` (api + mongo + nginx with TLS termination and health checks) inside `server/`. See `server/dockerfile`, `server/docker-compose.yml` and `server/nginx.conf`.
 
+## Deploy to Railway (frontend + API on one service)
+
+The root `Dockerfile` packs the client and the server behind nginx **on a single domain**, so the httpOnly cookies (and the `session_present` flag) work first-party. This is required because `up.railway.app` is a public suffix: two separate Railway services (`*.up.railway.app`) are cross-site and cookies won't flow between them.
+
+1. Create a new Railway service from the repository root (it picks up the root `railway.json`: DOCKERFILE builder, `Dockerfile`, healthcheck `/health`).
+2. Set the service variables:
+
+   ```
+   ENVIROMENT=production
+   JWT_SECRET_TOKEN=<secret, at least 32 chars>
+   JWT_SALT_TOKEN=10
+   DUMMY_PASSWORD=dummy-password-for-timing
+   TRUST_PROXY=true
+   MONGO_DB_URI_PRODUCTION=<your Atlas URI>
+   MONGO_DB_URI_DEVELOPMENT=<same URI, required by the schema>
+   CORS_ALLOWED_DOMAINS="https://<your-domain>.up.railway.app"
+   ```
+
+3. In Networking → Generate domain. Open `https://<your-domain>.up.railway.app`.
+
+Inside the container: nginx listens on Railway's injected `PORT` and serves the SPA (`/`) while proxying `/api` and `/health` to Express on the internal port `5000`. `VITE_API_URL` defaults to `/api` (same origin) at build time, so no extra frontend variables are needed.
+
 ## Author
 
 👤 **Libardo Rengifo**

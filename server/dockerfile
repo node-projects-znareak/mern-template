@@ -22,7 +22,8 @@ FROM base AS runtime
 ENV NODE_ENV=production
 
 COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --prod --frozen-lockfile
+# --ignore-scripts: evita el script `prepare` de husky (devDependency) en --prod
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
 COPY --from=build /app/dist ./dist
 

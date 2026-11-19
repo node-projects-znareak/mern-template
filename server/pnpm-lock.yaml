@@ -65,6 +65,9 @@ importers:
       retry:
         specifier: 0.13.1
         version: 0.13.1
+      swagger-ui-express:
+        specifier: 5.0.1
+        version: 5.0.1(express@5.3.0)
       tsx:
         specifier: ^4.23.15
         version: 4.23.15
@@ -144,9 +147,6 @@ importers:
       nodemon:
         specifier: 3.1.14
         version: 3.1.14
-      swagger-ui-express:
-        specifier: 5.0.1
-        version: 5.0.1(express@5.3.0)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

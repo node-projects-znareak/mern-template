@@ -5,6 +5,7 @@
   "type": "module",
   "author": "libardo",
   "license": "ISC",
+  "packageManager": "pnpm@10.1.0",
   "engines": {
     "node": ">=22.12.0",
     "npm": ">=11.1.0"

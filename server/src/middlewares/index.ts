@@ -78,7 +78,9 @@ export default async function requiredUserAuth(
 
     next();
   } catch (err) {
-    logger.error({ requestId: req.id ?? "unknown", err }, "Auth middleware error");
+    // 401 esperado (token ausente/expirado/revocado): se loguea como warning,
+    // no como error, para no ensuciar los logs de producción.
+    logger.warn({ requestId: req.id ?? "unknown", err }, "Auth middleware rejected request");
     error(res, toErrorMessage(err), 401);
   }
 }

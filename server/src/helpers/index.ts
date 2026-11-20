@@ -4,5 +4,4 @@ export { signAccessToken, signRefreshToken, verifyAccessToken, verifyRefreshToke
 export { logger, message, setupGlobalLogging } from "./logger";
 export { getLocalIP } from "./network";
 export { hashPassword, isLoginPasswordInvalid } from "./password";
-export { isRequestAjaxOrApi } from "./request";
 export { table } from "./table";

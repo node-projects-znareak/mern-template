@@ -26,6 +26,10 @@ export const envSchema = z.object({
 
   TRUST_PROXY: z.enum(["true", "false"]).default("false"),
 
+  // Opcional: número exacto de saltos de proxy de confianza (Railway edge +
+  // nginx = 2). Si se define, tiene prioridad sobre el TRUST_PROXY booleano.
+  TRUST_PROXY_HOPS: z.coerce.number().int().min(1).max(5).optional(),
+
   // Opcionales: si ambos están definidos, el servidor escucha con HTTPS.
   // Útiles para simular producción en local con certificados (p. ej. mkcert).
   HTTPS_CERT_PATH: z.string().optional().default(""),

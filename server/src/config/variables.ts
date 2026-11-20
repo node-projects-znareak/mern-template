@@ -17,6 +17,8 @@ export const {
 
 export const TRUST_PROXY: boolean = env.TRUST_PROXY === "true";
 
+export const TRUST_PROXY_HOPS: number | undefined = env.TRUST_PROXY_HOPS;
+
 export const HTTPS_CERT_PATH: string = env.HTTPS_CERT_PATH;
 export const HTTPS_KEY_PATH: string = env.HTTPS_KEY_PATH;
 

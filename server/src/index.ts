@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import startServer from "@config/server";
-import { API, HOST, TRUST_PROXY } from "@config/variables";
+import { API, HOST, TRUST_PROXY, TRUST_PROXY_HOPS } from "@config/variables";
 import { setupGlobalLogging } from "@helpers/logger";
 import {
   COMPRESSION_MIDDLEWARE,
@@ -42,7 +42,7 @@ if (API.ENVIROMENT === "development") {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
 
-app.set("trust proxy", TRUST_PROXY ? 1 : 0);
+app.set("trust proxy", TRUST_PROXY_HOPS ?? (TRUST_PROXY ? 1 : 0));
 
 app.use(REQUEST_ID_MIDDLEWARE);
 

@@ -55,6 +55,14 @@ connection.on("error", (err) => {
 });
 
 export async function closeDb(server: Server): Promise<void> {
+  // Si el apagado se queda colgado (p. ej. Mongo inaccesible al desconectar),
+  // este timer fuerza la salida para que el proceso no quede vivo para siempre.
+  const forceExit = setTimeout(() => {
+    message.error("Forced shutdown: disconnect timed out");
+    process.exit(1);
+  }, 10_000);
+  forceExit.unref();
+
   try {
     await mongoose.disconnect();
     message.success("MongoDB disconnected successfully");
@@ -62,6 +70,8 @@ export async function closeDb(server: Server): Promise<void> {
     message.success("The server has stopped successfully");
   } catch (err) {
     message.error("Error disconnecting from MongoDB", err);
+  } finally {
+    clearTimeout(forceExit);
   }
 }
 

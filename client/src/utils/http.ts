@@ -1,6 +1,7 @@
 import axios, { type AxiosError } from "axios";
 import { queryClient } from "@/lib/queryClient";
 import { router } from "@/router";
+import { broadcastSession } from "@/utils/sessionChannel";
 import { ResponseData, ResponseFormat } from "@interfaces/axios";
 import type { User } from "@interfaces/auth";
 import type { EmailCheckResponse } from "@interfaces/email";
@@ -58,14 +59,19 @@ instance.interceptors.response.use(
         });
         await refreshPromise;
       } catch {
-        // El refresh falló: la sesión ya no es renovable.
+        // El refresh falló: la sesión ya no es renovable. Se mata el estado en
+        // ESTA pestaña con setQueryData (no dispara refetch, a diferencia de
+        // clear(), que provocaría que el SessionProvider volviera a llamar
+        // /user y fallara el refresh otra vez, en bucle) y se avisa al resto
+        // de pestañas por BroadcastChannel.
         retriedUrls.delete(url);
+        queryClient.setQueryData(["userSession"], null);
+        broadcastSession({ type: "logout" });
+
+        // Solo se navega a /login si no estamos ya en una página de auth.
         const onAuthPage = ["/login", "/register"].some((path) => window.location.pathname.startsWith(path));
 
-        // En páginas de auth no se limpia la caché: el SessionProvider refetchearía
-        // /user al instante y volvería a fallar el refresh, creando un bucle infinito.
         if (!onAuthPage) {
-          queryClient.clear();
           void router.navigate("/login", { replace: true });
         }
 

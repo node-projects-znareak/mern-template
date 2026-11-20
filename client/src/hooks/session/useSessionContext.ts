@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { broadcastSession, subscribeToSession } from "@/utils/sessionChannel";
-import { logoutUser } from "@/utils/http";
+import { hasSessionCookie, logoutUser } from "@/utils/http";
 import useSession from "./useSession";
 import type { User } from "@interfaces/auth";
 
@@ -24,6 +24,29 @@ export default function useSessionContext() {
     });
 
     return unsubscribe;
+  }, [queryClient]);
+
+  // Vigilante de la cookie bandera: si el servidor limpió las cookies (refresh
+  // fallido, reuso detectado, expiración) sin que ningún 401 pasara por el
+  // interceptor de ESTA pestaña, el usuario en caché se elimina igualmente.
+  // Sin esto la UI seguiría mostrando una sesión muerta hasta un F5.
+  // Se comprueba SOLO en eventos (al volver a la pestaña): sin intervalos.
+  useEffect(() => {
+    const syncSessionWithCookies = () => {
+      const hasUser = (queryClient.getQueryData(["userSession"]) ?? null) !== null;
+      if (!hasSessionCookie() && hasUser) {
+        queryClient.setQueryData(["userSession"], null);
+        broadcastSession({ type: "logout" });
+      }
+    };
+
+    window.addEventListener("focus", syncSessionWithCookies);
+    document.addEventListener("visibilitychange", syncSessionWithCookies);
+
+    return () => {
+      window.removeEventListener("focus", syncSessionWithCookies);
+      document.removeEventListener("visibilitychange", syncSessionWithCookies);
+    };
   }, [queryClient]);
 
   const logout = useCallback(async () => {

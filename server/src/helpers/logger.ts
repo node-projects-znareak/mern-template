@@ -1,3 +1,4 @@
+import { IS_PRODUCTION } from "@config/variables";
 import pino from "pino";
 import pretty from "pino-pretty";
 
@@ -5,6 +6,8 @@ import { toErrorMessage } from "./errors";
 
 // Redacción de datos sensibles: los logs nunca deben contener tokens,
 // cookies ni contraseñas.
+// En producción se loguea JSON crudo (sin ANSI ni pino-pretty): más rápido y
+// compatible con agregadores de logs (Railway, Loki, CloudWatch...).
 export const logger = pino(
   {
     redact: {
@@ -19,10 +22,12 @@ export const logger = pino(
       censor: "[REDACTED]",
     },
   },
-  pretty({
-    colorize: true,
-    sync: true,
-  }),
+  IS_PRODUCTION
+    ? pino.destination(1)
+    : pretty({
+        colorize: true,
+        sync: true,
+      }),
 );
 
 export const message = {

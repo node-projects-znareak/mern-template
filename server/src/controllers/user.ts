@@ -1,7 +1,6 @@
 import { clearAuthCookies } from "@helpers/cookies";
 import { error, success } from "@helpers/httpResponses";
 import { isLoginPasswordInvalid } from "@helpers/index";
-import TokenService from "@services/token";
 import UserService from "@services/user";
 import type { NextFunction, Request, Response } from "express";
 
@@ -35,9 +34,9 @@ class UserController {
         return;
       }
 
-      // Revocar TODAS las sesiones (todos los refresh tokens) del usuario:
-      // el cambio de contraseña es el remedio ante un token robado.
-      await TokenService.revokeAllForUser(session.userId);
+      // El servicio ya revocó TODAS las sesiones del usuario (sus refresh
+      // tokens) al cambiar la contraseña; aquí solo se limpian las cookies
+      // del navegador actual.
       clearAuthCookies(res);
 
       success(res, userUpdated);

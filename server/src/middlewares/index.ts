@@ -1,6 +1,7 @@
 import { ACCESS_TOKEN_COOKIE } from "@helpers/cookies";
 import { error } from "@helpers/httpResponses";
 import { toErrorMessage, verifyAccessToken } from "@helpers/index";
+import { logger } from "@helpers/logger";
 import UserService from "@services/user";
 import type { NextFunction, Request, Response } from "express";
 
@@ -42,7 +43,8 @@ export default async function requiredUserAuth(
     if (normalizedToken === undefined) {
       // Diagnóstico sin exponer el token: longitud y prefijo ayudan a detectar
       // comillas/espacios/proxies que corrompen la cookie.
-      console.warn(
+      logger.warn(
+        { requestId: req.id ?? "unknown" },
         `[auth] access token con formato inválido (longitud=${token.length}, prefijo="${token.slice(0, 12)}")`,
       );
       throw new Error("The access token is malformed");
@@ -76,7 +78,7 @@ export default async function requiredUserAuth(
 
     next();
   } catch (err) {
-    console.error(err);
+    logger.error({ requestId: req.id ?? "unknown", err }, "Auth middleware error");
     error(res, toErrorMessage(err), 401);
   }
 }

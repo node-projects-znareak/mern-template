@@ -8,7 +8,10 @@ export const REFRESH_TOKEN_COOKIE = "refresh_token";
 export const SESSION_FLAG_COOKIE = "session_present";
 
 const ACCESS_TOKEN_MAX_AGE_MS = 15 * 60 * 1000;
-const REFRESH_TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+// Fuente única de verdad del TTL del refresh token: se usa aquí para la cookie
+// y en services/token.ts para el `expiresAt` del documento en base de datos.
+export const REFRESH_TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 // Con COOKIE_DOMAIN (p. ej. ".example.com") las cookies se comparten entre
 // subdominios del mismo sitio (app.example.com ↔ api.example.com).

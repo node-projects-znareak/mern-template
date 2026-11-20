@@ -153,6 +153,8 @@ export default async function startServer(app: Express, routers: Router): Promis
     return activePort;
   } catch (err) {
     message.error("Error Ocurred while starting the server", err);
-    return PORT;
+    // Si el arranque falla (p. ej. Mongo inaccesible tras los reintentos),
+    // el proceso debe morir: sin esto quedaría vivo para siempre sin escuchar.
+    process.exit(1);
   }
 }

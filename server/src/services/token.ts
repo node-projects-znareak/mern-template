@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
 
+import { REFRESH_TOKEN_MAX_AGE_MS } from "@helpers/cookies";
 import { toUserId } from "@helpers/id";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "@helpers/jwt";
 import { RefreshTokenModel } from "@models/refreshToken";
@@ -16,7 +17,9 @@ export interface RotatedSession {
   readonly tokens: TokenPair;
 }
 
-const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+// TTL del refresh token: reutiliza la fuente única de cookies.ts para que la
+// cookie y el `expiresAt` en BD no se desincronicen.
+const REFRESH_TOKEN_TTL_MS = REFRESH_TOKEN_MAX_AGE_MS;
 
 // Ventana de gracia para rotaciones concurrentes: si un token recién rotado se
 // presenta otra vez dentro de esta ventana (p. ej. dos pestañas refrescando a la

@@ -28,59 +28,68 @@ export default async function requiredUserAuth(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
+  // El token viaja SOLO en la cookie httpOnly: aceptar un header Bearer duplicaba
+  // el canal de entrada (más superficie de robo de token) sin que el cliente lo use.
+  const cookieToken = req.cookies?.[ACCESS_TOKEN_COOKIE] as string | undefined;
+  const token = typeof cookieToken === "string" ? cookieToken : undefined;
+
+  if (!token) {
+    error(res, "The access token is missing", 401);
+    return;
+  }
+
+  const normalizedToken = normalizeAccessToken(token);
+
+  if (normalizedToken === undefined) {
+    // Diagnóstico sin exponer el token: longitud y prefijo ayudan a detectar
+    // comillas/espacios/proxies que corrompen la cookie.
+    logger.warn(
+      { requestId: req.id ?? "unknown" },
+      `[auth] access token con formato inválido (longitud=${token.length}, prefijo="${token.slice(0, 12)}")`,
+    );
+    error(res, "The access token is malformed", 401);
+    return;
+  }
+
+  let userId: string;
+  let issuedAt: number;
   try {
-    const cookieToken = req.cookies?.[ACCESS_TOKEN_COOKIE] as string | undefined;
-    const header = req.get("authorization");
-    const headerToken = header?.startsWith("Bearer ") ? header.slice("Bearer ".length) : undefined;
-    const token = typeof cookieToken === "string" ? cookieToken : headerToken;
-
-    if (!token) {
-      throw new Error("The access token is missing");
-    }
-
-    const normalizedToken = normalizeAccessToken(token);
-
-    if (normalizedToken === undefined) {
-      // Diagnóstico sin exponer el token: longitud y prefijo ayudan a detectar
-      // comillas/espacios/proxies que corrompen la cookie.
-      logger.warn(
-        { requestId: req.id ?? "unknown" },
-        `[auth] access token con formato inválido (longitud=${token.length}, prefijo="${token.slice(0, 12)}")`,
-      );
-      throw new Error("The access token is malformed");
-    }
-
-    const { userId, issuedAt } = await verifyAccessToken(normalizedToken);
-
-    const user = await UserService.getUserById(toUserId(userId));
-
-    if (!user) {
-      throw new Error("The user does not exist, please try again");
-    }
-
-    if (user.passwordChangedAt) {
-      // iat del JWT tiene precisión de segundos; comparar en segundos evita invalidar
-      // tokens emitidos en el mismo segundo en que se cambió la contraseña
-      const passwordChangedAtSeconds = Math.floor(user.passwordChangedAt.getTime() / 1000);
-      if (issuedAt < passwordChangedAtSeconds) {
-        throw new Error("The session is no longer valid, please log in again");
-      }
-    }
-
-    // eslint-disable-next-line require-atomic-updates -- la sesión se construye tras los awaits
-    req.session = {
-      user,
-      userId: toUserId(user._id),
-      token,
-    };
-    // eslint-disable-next-line require-atomic-updates
-    req.user = user;
-
-    next();
+    ({ userId, issuedAt } = await verifyAccessToken(normalizedToken));
   } catch (err) {
     // 401 esperado (token ausente/expirado/revocado): se loguea como warning,
     // no como error, para no ensuciar los logs de producción.
     logger.warn({ requestId: req.id ?? "unknown", err }, "Auth middleware rejected request");
     error(res, toErrorMessage(err), 401);
+    return;
   }
+
+  // Desde aquí los errores ya NO se convierten en 401: un fallo de base de datos
+  // debe llegar al manejador global (500), no hacerse pasar por sesión inválida.
+  const user = await UserService.getUserById(toUserId(userId));
+
+  if (!user) {
+    error(res, "The user does not exist, please try again", 401);
+    return;
+  }
+
+  if (user.passwordChangedAt) {
+    // iat del JWT tiene precisión de segundos; comparar en segundos evita invalidar
+    // tokens emitidos en el mismo segundo en que se cambió la contraseña
+    const passwordChangedAtSeconds = Math.floor(user.passwordChangedAt.getTime() / 1000);
+    if (issuedAt < passwordChangedAtSeconds) {
+      error(res, "The session is no longer valid, please log in again", 401);
+      return;
+    }
+  }
+
+  // eslint-disable-next-line require-atomic-updates -- la sesión se construye tras los awaits
+  req.session = {
+    user,
+    userId: toUserId(user._id),
+    token,
+  };
+  // eslint-disable-next-line require-atomic-updates
+  req.user = user;
+
+  next();
 }

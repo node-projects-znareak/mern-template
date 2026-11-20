@@ -1,16 +1,17 @@
 import { cn } from "@/utils/helpers";
 
 interface SpinnerProps {
-  className?: string;
   label?: string;
+  className?: string;
 }
 
-export default function Spinner({ className, label = "Cargando..." }: SpinnerProps) {
+const Spinner = ({ label, className }: SpinnerProps) => {
   return (
-    <div
-      role="status"
-      aria-label={label}
-      className={cn("size-8 animate-spin rounded-full border-4 border-primary border-t-transparent", className)}
-    />
+    <div className={cn("flex flex-col items-center gap-3", className)} role="status" aria-live="polite">
+      <div className="size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      {label ? <span className="text-sm text-muted-foreground">{label}</span> : null}
+    </div>
   );
-}
+};
+
+export default Spinner;

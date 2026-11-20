@@ -1,4 +1,5 @@
 import { ACCESS_TOKEN_EXPIRES_IN, JWT_SECRET_TOKEN } from "@config/variables";
+import { REFRESH_TOKEN_MAX_AGE_MS } from "@helpers/cookies";
 import jwt, { type SignOptions, type VerifyOptions } from "jsonwebtoken";
 
 import type { UserId } from "../types/brand";
@@ -49,7 +50,7 @@ export function signRefreshToken(userId: UserId, jti: string): string {
     ...SIGN_BASE,
     subject: userId,
     jwtid: jti,
-    expiresIn: "7d",
+    expiresIn: REFRESH_TOKEN_MAX_AGE_MS / 1000,
   });
 }
 

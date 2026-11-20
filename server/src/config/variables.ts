@@ -32,6 +32,8 @@ export const MONGO_DB_URL: string = IS_PRODUCTION
   ? env.MONGO_DB_URI_PRODUCTION
   : env.MONGO_DB_URI_DEVELOPMENT;
 
+// Los limiters usan el store en memoria (un solo proceso): para escalar la API a
+// varias réplicas habría que pasar a un store compartido (p. ej. Redis).
 export const RATE_LIMITS = {
   windowMs: 2 * 60 * 1000,
   max: 500,

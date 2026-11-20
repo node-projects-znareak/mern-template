@@ -30,6 +30,9 @@ COPY --from=build /app/dist ./dist
 # En dist/ ya está package.json con los alias de module-alias y swagger.json
 WORKDIR /app/dist
 
+# Ejecutar como usuario no privilegiado (node, UID 1000): no hace falta root en runtime
+USER node
+
 EXPOSE 5000
 
 CMD ["node", "index.js"]

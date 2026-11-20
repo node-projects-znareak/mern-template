@@ -39,8 +39,8 @@ class UserService {
   }
 
   async isEmailInUse(email: string): Promise<boolean> {
-    const count = await UserModel.countDocuments({ email: normalizeEmail(email) });
-    return count > 0;
+    // `exists` se detiene en el primer documento y aprovecha el índice único de email.
+    return (await UserModel.exists({ email: normalizeEmail(email) })) !== null;
   }
 
   async getUserById(id: UserId): Promise<PublicUser | null> {
@@ -48,6 +48,13 @@ class UserService {
   }
 
   async changePassword({ id, password }: ChangePasswordInput): Promise<PublicUser | null> {
+    // Primero se revocan TODAS las sesiones (refresh tokens) y después se actualiza
+    // la contraseña: sin transacción disponible (Mongo standalone), este orden es el
+    // seguro — si el proceso muere entre ambas operaciones, el peor caso es que el
+    // usuario tenga que volver a iniciar sesión, pero nunca que una sesión robada
+    // sobreviva al cambio de contraseña.
+    await TokenService.revokeAllForUser(id);
+
     const userUpdated = await UserModel.findByIdAndUpdate(
       id,
       {
@@ -56,9 +63,6 @@ class UserService {
       },
       OPTIONS_UPDATE,
     ).lean();
-
-    // El cambio de contraseña invalida todas las sesiones: se revocan los refresh tokens
-    await TokenService.revokeAllForUser(id);
 
     return userUpdated ? toPublicUser(userUpdated) : null;
   }

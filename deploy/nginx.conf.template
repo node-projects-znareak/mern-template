@@ -6,6 +6,14 @@ server {
 
     client_max_body_size 1m;
 
+    # Cabeceras de seguridad del SPA (la API ya pone las suyas con helmet).
+    # Vite genera scripts externos, por lo que la CSP no necesita 'unsafe-inline'
+    # en script-src (solo en style-src para estilos inline de React).
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'" always;
+
     root /usr/share/nginx/html;
     index index.html;
 

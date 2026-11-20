@@ -6,6 +6,14 @@ export const passwordScheme = yup
   .max(50, "Maximum 50 characters for password")
   .required("Password is required");
 
+// Contraseñas nuevas: mínimo 8 (igual que el cliente). Login y contraseña actual
+// mantienen 6 para no bloquear cuentas antiguas.
+export const newPasswordScheme = yup
+  .string()
+  .min(8, "Minimum 8 characters for password")
+  .max(50, "Maximum 50 characters for password")
+  .required("Password is required");
+
 export const idSchema = yup
   .string()
   .typeError("Identifier must be an ObjectId")
@@ -36,11 +44,7 @@ export const signupSchemaValidation = yup.object({
       .string()
       .email("Email must be valid, example: example@domain.com")
       .required("Email is required"),
-    password: yup
-      .string()
-      .min(6, "Minimum 6 characters for password")
-      .max(200, "Maximum 200 characters for password")
-      .required("Password is required"),
+    password: newPasswordScheme,
     passwordConfirm: passwordScheme.test(
       "passwordChangeValidation",
       "Passwords do not match",
@@ -55,7 +59,7 @@ export const signupSchemaValidation = yup.object({
 export const passwordChangeValidation = yup.object({
   body: yup.object({
     currentPassword: passwordScheme,
-    password: passwordScheme,
+    password: newPasswordScheme,
     passwordConfirm: passwordScheme.test(
       "passwordChangeValidation",
       "Passwords do not match",

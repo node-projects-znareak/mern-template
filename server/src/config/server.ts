@@ -5,7 +5,7 @@ import {
   type ServerOptions as HttpsServerOptions,
 } from "node:https";
 
-import { closeDb, connectDb, getDatabaseHealth } from "@config/connection";
+import { closeDb, connectDb, getDatabaseHealth, pingDatabase } from "@config/connection";
 import { API, HOST, HTTPS_CERT_PATH, HTTPS_KEY_PATH, PORT } from "@config/variables";
 import { listAppEndpoints } from "@helpers/endpoints";
 import { getLocalIP, message, table } from "@helpers/index";
@@ -92,16 +92,15 @@ export default async function startServer(app: Express, routers: Router): Promis
   try {
     await connectDb();
 
-    wrapServerErrors(app);
-
     app.use("/api", routers);
 
-    app.get("/health", (_req, res) => {
+    app.get("/health", async (_req, res) => {
       const database = getDatabaseHealth();
-      const healthy = database.status === "connected";
+      const responsive = await pingDatabase();
+      const healthy = database.status === "connected" && responsive;
       res.status(healthy ? 200 : 503).json({
         status: healthy ? "OK" : "DEGRADED",
-        database: database.status,
+        database: healthy ? database.status : "disconnected",
         uptime: process.uptime(),
       });
     });
@@ -113,6 +112,9 @@ export default async function startServer(app: Express, routers: Router): Promis
         path: req.path,
       });
     });
+
+    // Los manejadores de error deben registrarse DESPUÉS de las rutas (Express 5).
+    wrapServerErrors(app);
 
     const httpsOptions = getHttpsOptions();
     const { server, port: activePort } = await listenWithFallback({

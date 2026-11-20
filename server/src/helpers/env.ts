@@ -15,7 +15,13 @@ export const envSchema = z.object({
 
   // TTL del access token en formato ms ("15m", "30s", "1h").
   // En desarrollo se puede bajar (p. ej. "10s") para probar la renovación vía refresh.
-  ACCESS_TOKEN_EXPIRES_IN: z.string().min(1).default("15m"),
+  ACCESS_TOKEN_EXPIRES_IN: z
+    .string()
+    .regex(
+      /^\d+(ms|s|m|h|d)$/,
+      "ACCESS_TOKEN_EXPIRES_IN must be a valid ms duration (e.g. 15m, 10s, 1h)",
+    )
+    .default("15m"),
 
   CORS_ALLOWED_DOMAINS: z.string().transform((value) =>
     value

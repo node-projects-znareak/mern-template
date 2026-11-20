@@ -24,7 +24,6 @@ const UserSchema = new Schema(
       required: [true, "Name is required"],
       minlength: 4,
       maxlength: 100,
-      unique: true,
       trim: true,
     },
   },

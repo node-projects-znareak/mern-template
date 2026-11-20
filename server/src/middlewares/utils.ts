@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { API } from "@config/variables";
+import { error } from "@helpers/httpResponses";
 import { logger } from "@helpers/logger";
 import compression from "compression";
 import cookieParser from "cookie-parser";
@@ -75,8 +76,13 @@ export const NO_SQL_INJECTION_GUARD: RequestHandler = (req, _res, next) => {
   next();
 };
 
-export const SECURITY_MIDDLEWARES: RequestHandler[] = [
-  helmet(),
+// Swagger UI inyecta scripts inline y la CSP estricta la rompería; la
+// documentación solo se monta en desarrollo, así que la CSP se omite en /api-docs.
+const CSP_MIDDLEWARE: RequestHandler = (req, res, next) => {
+  if (req.path.startsWith("/api-docs")) {
+    next();
+    return;
+  }
   contentSecurityPolicy({
     useDefaults: true,
     directives: {
@@ -86,9 +92,35 @@ export const SECURITY_MIDDLEWARES: RequestHandler[] = [
       upgradeInsecureRequests: [],
     },
     reportOnly: false,
-  }),
+  })(req, res, next);
+};
+
+// Defensa CSRF para auth por cookies: rechaza métodos de escritura cuyo Origin
+// no esté en la allowlist. Clave si se usa COOKIE_DOMAIN, porque SameSite=Lax
+// no bloquea peticiones desde subdominios hermanos (son same-site).
+export const CSRF_ORIGIN_GUARD: RequestHandler = (req, res, next) => {
+  if (req.method === "GET" || req.method === "HEAD" || req.method === "OPTIONS") {
+    next();
+    return;
+  }
+
+  const origin = req.get("origin");
+  if (origin !== undefined && !API.CORS_ALLOWED_DOMAINS.includes(origin)) {
+    error(res, "Origin not allowed", 403);
+    return;
+  }
+
+  next();
+};
+
+export const SECURITY_MIDDLEWARES: RequestHandler[] = [
+  // helmet pone su propia CSP por defecto; se desactiva para usar una sola
+  // política (CSP_MIDDLEWARE), que además excluye /api-docs en desarrollo.
+  helmet({ contentSecurityPolicy: false }),
+  CSP_MIDDLEWARE,
   hpp(),
   rateLimit(API.RATE_LIMITS),
+  CSRF_ORIGIN_GUARD,
   NO_SQL_INJECTION_GUARD,
 ];
 
@@ -96,5 +128,5 @@ export const CORS_MIDDLEWARE: RequestHandler = cors({
   origin: API.CORS_ALLOWED_DOMAINS,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Authorization", "Content-Type"],
+  allowedHeaders: ["Content-Type"],
 });

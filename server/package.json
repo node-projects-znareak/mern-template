@@ -52,7 +52,6 @@
     "morgan": "1.12.1",
     "pino": "10.4.0",
     "pino-pretty": "13.2.0",
-    "retry": "0.13.1",
     "swagger-ui-express": "5.0.1",
     "tsx": "^4.23.15",
     "yup": "1.7.1",
@@ -71,7 +70,6 @@
     "@types/module-alias": "^2.0.4",
     "@types/morgan": "^1.9.10",
     "@types/node": "^26.6.6",
-    "@types/retry": "^0.12.5",
     "@types/swagger-ui-express": "^4.1.8",
     "eslint": "10.15.0",
     "eslint-config-prettier": "^10.1.8",
@@ -84,6 +82,11 @@
     "nodemon": "3.1.14",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.73.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "lodash": ">=4.18.0"
+    }
   },
   "_moduleAliases": {
     "@middlewares": "./src/middlewares",
@@ -98,4 +101,3 @@
     "@schemas": "./src/schemas"
   }
 }
-

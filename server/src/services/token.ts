@@ -52,32 +52,40 @@ class TokenService {
       return null;
     }
 
-    const stored = await RefreshTokenModel.findOne({ tokenHash: hashToken(presentedToken) });
+    const tokenHash = hashToken(presentedToken);
+
+    // Rotación atómica: el filtro `revokedAt: null` hace que solo UNA petición
+    // concurrente gane la transición a revocado, cerrando la ventana TOCTOU entre
+    // leer el estado del token y marcarlo como rotado.
+    const rotated = await RefreshTokenModel.findOneAndUpdate(
+      { tokenHash, revokedAt: null },
+      { revokedAt: new Date(), rotatedAt: new Date() },
+    );
+
+    if (rotated) {
+      const userId = toUserId(String(rotated.user));
+      return { userId, tokens: await this.issueTokenPair(userId) };
+    }
+
+    // Ya estaba revocado: puede ser una rotación concurrente dentro de la gracia
+    // (otra pestaña ganó la carrera de arriba) o un reuso real (posible robo).
+    const stored = await RefreshTokenModel.findOne({ tokenHash });
     if (!stored) {
       return null;
     }
 
-    if (stored.revokedAt) {
-      const wasRotatedRecently =
-        stored.rotatedAt !== null &&
-        stored.rotatedAt !== undefined &&
-        Date.now() - stored.rotatedAt.getTime() <= REFRESH_ROTATION_GRACE_MS;
+    const wasRotatedRecently =
+      stored.rotatedAt !== null &&
+      stored.rotatedAt !== undefined &&
+      Date.now() - stored.rotatedAt.getTime() <= REFRESH_ROTATION_GRACE_MS;
 
-      if (!wasRotatedRecently) {
-        // Reuso real (posible robo): se revoca toda la familia de tokens del usuario
-        await RefreshTokenModel.updateMany(
-          { user: stored.user, revokedAt: null },
-          { revokedAt: new Date() },
-        );
-        return null;
-      }
-
-      // Rotación concurrente dentro de la ventana de gracia: continuar normalmente.
-    } else {
-      await RefreshTokenModel.updateOne(
-        { _id: stored._id },
-        { revokedAt: new Date(), rotatedAt: new Date() },
+    if (!wasRotatedRecently) {
+      // Reuso real (posible robo): se revoca toda la familia de tokens del usuario
+      await RefreshTokenModel.updateMany(
+        { user: stored.user, revokedAt: null },
+        { revokedAt: new Date() },
       );
+      return null;
     }
 
     const userId = toUserId(String(stored.user));

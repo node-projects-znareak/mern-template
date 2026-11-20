@@ -14,7 +14,10 @@ export const useCheckEmail = (email: string, enabled: boolean = false): UseCheck
     queryKey: ["checkEmail", email],
     queryFn: () => checkEmailAvailability(email),
     enabled: enabled && !!email && isEmailFormatValid(email),
-    retry: 3,
+    // El servidor rate-limita este endpoint: retry corto y staleTime para no
+    // quemar el límite mientras se escribe o se cambia de pestaña.
+    retry: 1,
+    staleTime: 30_000,
   });
 
   return {

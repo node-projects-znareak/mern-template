@@ -18,7 +18,8 @@ createRoot(document.getElementById("root")!).render(
       <SessionProvider>
         <App />
       </SessionProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* Solo en desarrollo: en producción Vite elimina esta rama del bundle */}
+      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   </StrictMode>
 );

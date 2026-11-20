@@ -3,7 +3,6 @@ import type { Server } from "node:http";
 import { API, IS_PRODUCTION } from "@config/variables";
 import { message, toError, toErrorMessage } from "@helpers/index";
 import mongoose, { type ConnectOptions } from "mongoose";
-import retry from "retry";
 
 import type { DatabaseHealth, DatabaseState } from "../types/mongo";
 
@@ -44,6 +43,21 @@ export function getDatabaseHealth(): DatabaseHealth {
   return { status: getDatabaseState() };
 }
 
+// Ping real a Mongo (usado por /health): readyState puede seguir en "connected"
+// un rato después de una caída de red; el ping devuelve el estado real.
+export async function pingDatabase(): Promise<boolean> {
+  const db = mongoose.connection.db;
+  if (!db) {
+    return false;
+  }
+  try {
+    await db.admin().ping();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 connection.on("open", () => {
   message.success(`Connected to mongo host: ${connection.host}`);
   message.success(`Connected on port: ${connection.port}`);
@@ -64,10 +78,17 @@ export async function closeDb(server: Server): Promise<void> {
   forceExit.unref();
 
   try {
+    // Primero se deja de aceptar conexiones y se terminan las peticiones en curso;
+    // solo entonces se cierra el pool de Mongo.
+    await new Promise<void>((resolve) => {
+      server.close(() => {
+        resolve();
+      });
+      server.closeIdleConnections();
+    });
+    message.success("The server has stopped successfully");
     await mongoose.disconnect();
     message.success("MongoDB disconnected successfully");
-    server.close();
-    message.success("The server has stopped successfully");
   } catch (err) {
     message.error("Error disconnecting from MongoDB", err);
   } finally {
@@ -75,37 +96,29 @@ export async function closeDb(server: Server): Promise<void> {
   }
 }
 
-export function connectDb(): Promise<typeof mongoose> {
-  return new Promise((resolve, reject) => {
-    const operation = retry.operation({
-      retries: 3,
-      factor: 2,
-      minTimeout: 1000,
-      maxTimeout: 5000,
-      randomize: true,
-    });
+export async function connectDb(): Promise<typeof mongoose> {
+  const MAX_ATTEMPTS = 4;
+  let lastError: unknown = null;
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises -- la API de retry no admite callbacks async
-    operation.attempt(async (currentAttempt) => {
-      try {
-        console.log("");
-        message.success(`Connecting to MongoDB... (Attempt ${currentAttempt})`);
-        const options = IS_PRODUCTION ? PRODUCTION_MONGO_OPTIONS : LOCAL_MONGO_OPTIONS;
-        const con = await mongoose.connect(API.MONGO_DB_URL, options);
-        resolve(con);
-      } catch (err) {
-        if (operation.retry(toError(err))) {
-          message.error(
-            `Connection attempt ${currentAttempt} failed, retrying...`,
-            toErrorMessage(err),
-          );
-          return;
-        }
-
-        const finalError = operation.mainError() ?? toError(err);
-        message.error("Failed to connect to MongoDB after all retries", finalError);
-        reject(finalError);
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      console.log("");
+      message.success(`Connecting to MongoDB... (Attempt ${attempt})`);
+      const options = IS_PRODUCTION ? PRODUCTION_MONGO_OPTIONS : LOCAL_MONGO_OPTIONS;
+      return await mongoose.connect(API.MONGO_DB_URL, options);
+    } catch (err) {
+      lastError = err;
+      if (attempt === MAX_ATTEMPTS) {
+        break;
       }
-    });
-  });
+      message.error(`Connection attempt ${attempt} failed, retrying...`, toErrorMessage(err));
+      // Espera real entre intentos (backoff): garantiza que solo haya UNA
+      // conexión en vuelo a la vez, sin intentos solapados.
+      await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+    }
+  }
+
+  const finalError = toError(lastError);
+  message.error("Failed to connect to MongoDB after all retries", finalError);
+  throw finalError;
 }

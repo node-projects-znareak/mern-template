@@ -47,7 +47,6 @@ app.set("trust proxy", TRUST_PROXY_HOPS ?? (TRUST_PROXY ? 1 : 0));
 app.use(REQUEST_ID_MIDDLEWARE);
 
 app.use(COMPRESSION_MIDDLEWARE);
-app.use(express.static("./uploads", { dotfiles: "deny", index: false, maxAge: "1d" }));
 app.use(...PARSING_MIDDLEWARES);
 app.use(...SECURITY_MIDDLEWARES);
 app.use(CORS_MIDDLEWARE);

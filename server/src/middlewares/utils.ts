@@ -33,7 +33,8 @@ export const PARSING_MIDDLEWARES: RequestHandler[] = [
   express.urlencoded({ extended: true, limit: "100kb" }),
 ];
 
-/** Elimina (mutando en lugar) las claves con `$` o `.` para evitar inyección NoSQL.
+/** Elimina (mutando en lugar) las claves con `$`, `.`, `__proto__`, `constructor`
+ *  o `prototype` para evitar inyección NoSQL y prototype pollution.
  *  Sustituye a express-mongo-sanitize, que reasigna `req.query` y falla con Express 5. */
 function sanitizeNoSqlInjection(value: unknown, onSanitize: (_key: string) => void): void {
   if (Array.isArray(value)) {
@@ -49,7 +50,13 @@ function sanitizeNoSqlInjection(value: unknown, onSanitize: (_key: string) => vo
 
   const record = value as Record<string, unknown>;
   for (const key of Object.keys(record)) {
-    if (key.startsWith("$") || key.includes(".")) {
+    if (
+      key.startsWith("$") ||
+      key.includes(".") ||
+      key === "__proto__" ||
+      key === "constructor" ||
+      key === "prototype"
+    ) {
       onSanitize(key);
       delete record[key];
       continue;

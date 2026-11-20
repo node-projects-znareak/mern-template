@@ -37,7 +37,7 @@ Copy `server/.env.example` to `server/.env` and adjust the values.
 | `HOST`                                                 | Address to bind (default `localhost`).                                                                 |
 | `ENVIROMENT`                                           | `development` \| `production` \| `test`. Controls `secure` cookies, logs, Swagger and Mongo pool size. |
 | `JWT_SECRET_TOKEN`                                     | HS256 secret (min 32 chars).                                                                           |
-| `JWT_SALT_TOKEN`                                       | bcrypt cost factor (OWASP recommends >= 10).                                                           |
+| `JWT_SALT_TOKEN`                                       | bcrypt cost factor (OWASP >= 10; use 12 in production).                                                |
 | `DUMMY_PASSWORD`                                       | Dummy password for timing-safe login (anti user-enumeration).                                          |
 | `CORS_ALLOWED_DOMAINS`                                 | Comma-separated allowed origins.                                                                       |
 | `TRUST_PROXY`                                          | `"true"` only behind nginx / a reverse proxy.                                                          |
@@ -93,6 +93,20 @@ Tokens live in **httpOnly cookies** — JavaScript can't read them, which mitiga
 
 - `sameSite: "lax"` on all of them; `secure` is enabled automatically when `ENVIROMENT=production`.
 - Passwords: bcrypt async (cost 10); `passwordChangedAt` invalidates tokens issued before a password change.
+
+### Why the `refresh_token` only appears in `/api/auth` requests
+
+It is **not a bug** that `GET /api/user` only sends `access_token` (and `session_present`) in its `Cookie` header: the `refresh_token` has `Path=/api/auth`, so the browser only attaches it to requests under `/api/auth/*` (login, signup, refresh, logout). This limits exposure of the most powerful token to the auth endpoints only.
+
+Two things that look confusing but are expected:
+
+1. **The cookie seems to "disappear" in DevTools.** Chrome's Application → Cookies table only lists cookies applicable to the current page's URL. While you are on `/` (or any path outside `/api/auth`), the `refresh_token` row is not shown — but the cookie is still stored.
+2. **`GET /api/user` carries no `refresh_token`.** That's the `Path` attribute working as intended.
+
+To verify the refresh token exists and works:
+
+- Inspect any request to `/api/auth/*` (e.g. the next `/api/auth/refresh`): its `Cookie` request header **will** include `refresh_token`.
+- Delete only the `access_token` cookie in DevTools and reload the page: you'll see `GET /api/user` → 401 → `POST /api/auth/refresh` (with the refresh token) → 200 → a new token pair → `GET /api/user` → 200, without going through the login form.
 
 ### Endpoints
 
@@ -275,7 +289,7 @@ The root `Dockerfile` packs the client and the server behind nginx **on a single
    ```
    ENVIROMENT=production
    JWT_SECRET_TOKEN=<secret, at least 32 chars>
-   JWT_SALT_TOKEN=10
+   JWT_SALT_TOKEN=12
    DUMMY_PASSWORD=dummy-password-for-timing
    TRUST_PROXY=true
    MONGO_DB_URI_PRODUCTION=<your Atlas URI>

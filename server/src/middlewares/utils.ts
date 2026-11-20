@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { API } from "@config/variables";
 import { logger } from "@helpers/logger";
 import compression from "compression";
@@ -8,6 +10,19 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import contentSecurityPolicy from "helmet-csp";
 import hpp from "hpp";
+
+/**
+ * Asigna un ID único a cada petición (acepta X-Request-Id del cliente) y lo
+ * devuelve en la cabecera de respuesta para correlacionar logs y errores.
+ */
+export const REQUEST_ID_MIDDLEWARE: RequestHandler = (req, res, next) => {
+  const incoming = req.get("x-request-id");
+  const requestId = typeof incoming === "string" && incoming.length > 0 ? incoming : randomUUID();
+
+  req.id = requestId;
+  res.setHeader("X-Request-Id", requestId);
+  next();
+};
 
 export const COMPRESSION_MIDDLEWARE: RequestHandler = compression();
 

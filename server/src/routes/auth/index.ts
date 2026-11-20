@@ -13,7 +13,28 @@ const router = express.Router();
 
 const authRateLimiter = rateLimit(AUTH_RATE_LIMITS);
 
-router.post("/login", authRateLimiter, validate(loginSchemaValidation), authController.login);
+// Límite por CUENTA (email normalizado) en login: complementa al límite por IP
+// contra credential stuffing distribuido. Solo cuentan los intentos FALLIDOS,
+// así un usuario legítimo no se bloquea por hacer logins exitosos seguidos.
+const loginAccountLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  skipSuccessfulRequests: true,
+  standardHeaders: true,
+  keyGenerator: (req) => {
+    const email = (req.body as { email?: unknown }).email;
+    return typeof email === "string" ? email.trim().toLowerCase() : "unknown";
+  },
+  skip: (req) => typeof (req.body as { email?: unknown }).email !== "string",
+});
+
+router.post(
+  "/login",
+  authRateLimiter,
+  loginAccountLimiter,
+  validate(loginSchemaValidation),
+  authController.login,
+);
 router.post("/signup", authRateLimiter, validate(signupSchemaValidation), authController.signup);
 router.post("/refresh", authController.refresh);
 router.post("/logout", authController.logout);

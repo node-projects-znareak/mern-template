@@ -8,6 +8,7 @@ export interface SignupInput extends LoginInput {
 }
 
 export interface ChangePasswordInput {
+  readonly currentPassword: string;
   readonly password: string;
   readonly passwordConfirm: string;
 }

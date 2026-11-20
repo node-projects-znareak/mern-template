@@ -54,6 +54,7 @@ export const signupSchemaValidation = yup.object({
 
 export const passwordChangeValidation = yup.object({
   body: yup.object({
+    currentPassword: passwordScheme,
     password: passwordScheme,
     passwordConfirm: passwordScheme.test(
       "passwordChangeValidation",

@@ -15,6 +15,7 @@ import {
   COMPRESSION_MIDDLEWARE,
   CORS_MIDDLEWARE,
   PARSING_MIDDLEWARES,
+  REQUEST_ID_MIDDLEWARE,
   SECURITY_MIDDLEWARES,
 } from "@middlewares/utils";
 import routes from "@routes/index";
@@ -42,6 +43,8 @@ if (API.ENVIROMENT === "development") {
 }
 
 app.set("trust proxy", TRUST_PROXY ? 1 : 0);
+
+app.use(REQUEST_ID_MIDDLEWARE);
 
 app.use(COMPRESSION_MIDDLEWARE);
 app.use(express.static("./uploads", { dotfiles: "deny", index: false, maxAge: "1d" }));

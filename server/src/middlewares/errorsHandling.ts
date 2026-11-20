@@ -1,11 +1,13 @@
 import { IS_PRODUCTION } from "@config/variables";
 import boom, { type Boom } from "@hapi/boom";
-import { isRequestAjaxOrApi, message, toErrorMessage } from "@helpers/index";
+import { isRequestAjaxOrApi, toErrorMessage } from "@helpers/index";
+import { logger } from "@helpers/logger";
 import type { ErrorRequestHandler, Express } from "express";
 
 // eslint-disable-next-line max-params
-const logErrors: ErrorRequestHandler = (err: unknown, _req, _res, next) => {
-  message.error(toErrorMessage(err), err);
+const logErrors: ErrorRequestHandler = (err: unknown, req, _res, next) => {
+  const errorText = toErrorMessage(err);
+  logger.error({ requestId: req.id ?? "unknown", err }, errorText);
   next(err);
 };
 
@@ -32,7 +34,7 @@ const clientErrorHandling: ErrorRequestHandler = (err: unknown, req, res, next) 
   const { statusCode, payload } = err.output;
 
   if (isRequestAjaxOrApi(req) || res.headersSent) {
-    const response: Record<string, unknown> = { ...payload };
+    const response: Record<string, unknown> = { ...payload, requestId: req.id };
     if (IS_PRODUCTION && statusCode < 500) {
       response.errorDescription = err.message;
     }

@@ -1,59 +1,26 @@
 
-[22:26:29.801] [32mINFO[39m (28868): [36mConnecting to MongoDB... (Attempt 1)[39m
-[22:26:29.834] [32mINFO[39m (28868): [36mConnected to mongo host: localhost[39m
-[22:26:29.835] [32mINFO[39m (28868): [36mConnected on port: 27017[39m
-[22:26:29.835] [32mINFO[39m (28868): [36mDatabase name: mern_template_dev[39m
+[19:26:35.551] [32mINFO[39m (15384): [36mConnecting to MongoDB... (Attempt 1)[39m
+[19:26:40.579] [31mERROR[39m (15384): [36mConnection attempt 1 failed, retrying...[39m
+[19:26:40.580] [31mERROR[39m (15384): [36mError message: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017[39m
+[19:26:40.581] [31mERROR[39m (15384): [36mError connecting to MongoDB[39m
+[19:26:40.581] [31mERROR[39m (15384): [36mError message: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017[39m
 
-[32m✔[39m Server running at http://localhost:5000
-[32m✔[39m Remote server at http://192.168.1.12:5000
-[32m✔[39m Environment: development
+[19:26:41.732] [32mINFO[39m (15384): [36mConnecting to MongoDB... (Attempt 2)[39m
+[19:26:46.748] [31mERROR[39m (15384): [36mConnection attempt 2 failed, retrying...[39m
+[19:26:46.748] [31mERROR[39m (15384): [36mError message: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017[39m
+[19:26:46.748] [31mERROR[39m (15384): [36mError connecting to MongoDB[39m
+[19:26:46.748] [31mERROR[39m (15384): [36mError message: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017[39m
 
-[43m[30m WARN [39m[49m Development mode enabled, extras dependencies are loaded
+[19:26:49.506] [32mINFO[39m (15384): [36mConnecting to MongoDB... (Attempt 3)[39m
+[19:26:54.511] [31mERROR[39m (15384): [36mConnection attempt 3 failed, retrying...[39m
+[19:26:54.511] [31mERROR[39m (15384): [36mError message: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017[39m
+[19:26:54.512] [31mERROR[39m (15384): [36mError connecting to MongoDB[39m
+[19:26:54.512] [31mERROR[39m (15384): [36mError message: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017[39m
 
-[32m✔[39m You can access the documentation on http://localhost:5000/api-docs
-
-┌───────────────────────────────────────────────────────┬──────────────────┬──────────────────────────────────────────────────────────────────────┐
-│ Route                                                 │ Method           │ Controller                                                           │
-├───────────────────────────────────────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────────┤
-│ /api/user                                             │ GET              │ getUserSession                                                       │
-├───────────────────────────────────────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────────┤
-│ /api/user/password                                    │ PATCH            │ anonymous, changePassword                                            │
-├───────────────────────────────────────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────────┤
-│ /api/auth/login                                       │ POST             │ anonymous, anonymous, login                                          │
-├───────────────────────────────────────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────────┤
-│ /api/auth/signup                                      │ POST             │ anonymous, anonymous, signup                                         │
-├───────────────────────────────────────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────────┤
-│ /api/auth/refresh                                     │ POST             │ refresh                                                              │
-├───────────────────────────────────────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────────┤
-│ /api/auth/logout                                      │ POST             │ logout                                                               │
-├───────────────────────────────────────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────────┤
-│ /api/auth/check-email                                 │ GET              │ anonymous, checkEmailAvailability                                    │
-├───────────────────────────────────────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────────┤
-│ /health                                               │ GET              │ anonymous                                                            │
-└───────────────────────────────────────────────────────┴──────────────────┴──────────────────────────────────────────────────────────────────────┘
-[0mGET /health [32m200[0m 5.747 ms - 57[0m
-[0mPOST /api/auth/login [32m200[0m 92.951 ms - 233[0m
-[0mPOST /api/auth/refresh [33m401[0m 0.985 ms - 77[0m
-[0mPOST /api/auth/refresh [33m401[0m 0.478 ms - 77[0m
-[0mGET /api/user [32m200[0m 3.502 ms - 224[0m
-[0mPOST /api/auth/refresh [33m401[0m 0.779 ms - 77[0m
-[0mPOST /api/auth/login [32m200[0m 71.931 ms - 233[0m
-[0mPOST /api/auth/refresh [33m401[0m 0.653 ms - 77[0m
-[0mPOST /api/auth/refresh [33m401[0m 0.572 ms - 77[0m
-[0mGET /api/user [32m200[0m 2.284 ms - 224[0m
-[0mPOST /api/auth/refresh [33m401[0m 0.554 ms - 77[0m
-[0mPOST /api/auth/login [32m200[0m 73.559 ms - 233[0m
-[0mPOST /api/auth/refresh [32m200[0m 7.421 ms - 233[0m
-[0mPOST /api/auth/login [32m200[0m 70.996 ms - 233[0m
-[0mPOST /api/auth/refresh [33m401[0m 0.546 ms - 77[0m
-[0mPOST /api/auth/login [32m200[0m 70.425 ms - 233[0m
-[0mPOST /api/auth/refresh [32m200[0m 5.759 ms - 233[0m
-[0mPOST /api/auth/refresh [32m200[0m 3.597 ms - 233[0m
-[0mGET /api/user [32m200[0m 1.693 ms - 224[0m
-[0mPOST /api/auth/refresh [32m200[0m 7.123 ms - 233[0m
-[0mPOST /api/auth/login [32m200[0m 71.603 ms - 233[0m
-[0mPOST /api/auth/refresh [32m200[0m 4.214 ms - 233[0m
-[0mPOST /api/auth/refresh [32m200[0m 4.435 ms - 233[0m
-[0mGET /api/user [32m200[0m 1.940 ms - 224[0m
-[0mPOST /api/auth/refresh [33m401[0m 11.820 ms - 84[0m
-[0mPOST /api/auth/refresh [33m401[0m 3.587 ms - 84[0m
+[19:26:59.519] [32mINFO[39m (15384): [36mConnecting to MongoDB... (Attempt 4)[39m
+[19:27:04.527] [31mERROR[39m (15384): [36mFailed to connect to MongoDB after all retries[39m
+[19:27:04.527] [31mERROR[39m (15384): [36mError message: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017[39m
+[19:27:04.527] [31mERROR[39m (15384): [36mError Ocurred while starting the server[39m
+[19:27:04.527] [31mERROR[39m (15384): [36mError message: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017[39m
+[19:27:04.528] [31mERROR[39m (15384): [36mError connecting to MongoDB[39m
+[19:27:04.528] [31mERROR[39m (15384): [36mError message: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017[39m

@@ -32,6 +32,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --dev
 
-      # Paso 4: Ejecuta ESLint usando el comando definido en package.json
+      # Paso 4: Typecheck (los errores de tipos no deben llegar a main)
+      - name: Run typecheck
+        run: pnpm typecheck
+
+      # Paso 5: Auditoría de dependencias (supply chain)
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=high
+
+      # Paso 6: Ejecuta ESLint usando el comando definido en package.json
       - name: Run ESLint
         run: pnpm lint

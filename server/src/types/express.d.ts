@@ -14,6 +14,8 @@ declare global {
       user?: PublicUser;
       session?: UserSession;
       files?: unknown;
+      /** Identificador único de la petición (asignado por REQUEST_ID_MIDDLEWARE). */
+      id: string;
     }
   }
 }

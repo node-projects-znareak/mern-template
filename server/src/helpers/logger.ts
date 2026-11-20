@@ -3,7 +3,22 @@ import pretty from "pino-pretty";
 
 import { toErrorMessage } from "./errors";
 
+// Redacción de datos sensibles: los logs nunca deben contener tokens,
+// cookies ni contraseñas.
 export const logger = pino(
+  {
+    redact: {
+      paths: [
+        "req.headers.authorization",
+        "req.headers.cookie",
+        "req.body.password",
+        "req.body.currentPassword",
+        "req.body.passwordConfirm",
+        "res.headers['set-cookie']",
+      ],
+      censor: "[REDACTED]",
+    },
+  },
   pretty({
     colorize: true,
     sync: true,

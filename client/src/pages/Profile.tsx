@@ -88,7 +88,7 @@ const Profile = () => {
                 <label htmlFor="profile-session-status" className="text-sm font-medium text-muted-foreground">
                   Session Status
                 </label>
-                <p id="profile-session-status" className="text-sm text-green-600">
+                <p id="profile-session-status" className="text-sm text-green-400">
                   Active
                 </p>
               </div>

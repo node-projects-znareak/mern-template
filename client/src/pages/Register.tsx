@@ -102,7 +102,7 @@ const Register = () => {
               required
             />
 
-            <div className="absolute right-8 top-1/2 mt-0.5 transform -translate-y-1/2">
+            <div className="absolute right-9 top-1/2 -translate-y-1/2 flex items-center">
               <PasswordRequirementsTooltip password={formData.password} />
             </div>
           </div>

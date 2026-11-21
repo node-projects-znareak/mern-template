@@ -1,7 +1,11 @@
 import { clearAuthCookies, REFRESH_TOKEN_COOKIE, setAuthCookies } from "@helpers/cookies";
 import { error, success } from "@helpers/httpResponses";
 import { toUserId } from "@helpers/id";
-import { isLoginPasswordInvalid, isMongoDuplicateKeyError } from "@helpers/index";
+import {
+  getDuplicateKeyField,
+  isLoginPasswordInvalid,
+  isMongoDuplicateKeyError,
+} from "@helpers/index";
 import { hashPassword } from "@helpers/password";
 import TokenService from "@services/token";
 import UserService from "@services/user";
@@ -57,18 +61,22 @@ class AuthController {
       setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
       success(res, { user: userCreated }, 201);
     } catch (err) {
+      // El 409 por duplicado puede venir del índice único de email o de un
+      // índice ANTIGUO de `name` (bases de datos creadas cuando name era
+      // unique). Miramos QUÉ campo falló para devolver el mensaje correcto.
       if (isMongoDuplicateKeyError(err)) {
-        error(res, "Email is already in use", 409);
+        const field = getDuplicateKeyField(err);
+        error(res, field === "name" ? "Name is already in use" : "Email is already in use", 409);
         return;
       }
       next(err);
     }
   }
 
-  // Renovación de sesión: 
-  // 1) leer el refresh de su cookie, 
+  // Renovación de sesión:
+  // 1) leer el refresh de su cookie,
   // 2) ROTARLO (uso único; null = inválido, reusado o robado → limpiar cookies y 401),
-  // 3) recargar el usuario 
+  // 3) recargar el usuario
   // 4) re-emitir el NUEVO par en las cookies.
   async refresh(this: void, req: Request, res: Response, next: NextFunction): Promise<void> {
     try {

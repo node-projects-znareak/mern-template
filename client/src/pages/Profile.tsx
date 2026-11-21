@@ -5,8 +5,6 @@ import { useAuthenticatedUser } from "@/hooks/session/useAuthenticatedUser";
 const Profile = () => {
   const { user, logout, updateUser } = useAuthenticatedUser();
 
-
-
   const changeUserState = () => {
     updateUser({
       name: "chjangename",

@@ -6,36 +6,33 @@ interface PasswordRequirementsTooltipProps {
   className?: string;
 }
 
-export const PasswordRequirementsTooltip = ({ 
-  password, 
-  className = "" 
-}: PasswordRequirementsTooltipProps) => {
+export const PasswordRequirementsTooltip = ({ password, className = "" }: PasswordRequirementsTooltipProps) => {
   const requirements = [
     {
       text: "At least 8 characters",
-      isValid: password.length >= 8
+      isValid: password.length >= 8,
     },
     {
       text: "One lowercase letter",
-      isValid: /[a-z]/.test(password)
+      isValid: /[a-z]/.test(password),
     },
     {
-      text: "One uppercase letter", 
-      isValid: /[A-Z]/.test(password)
+      text: "One uppercase letter",
+      isValid: /[A-Z]/.test(password),
     },
     {
       text: "One number",
-      isValid: /\d/.test(password)
-    }
+      isValid: /\d/.test(password),
+    },
   ];
 
   const tooltipContent = (
     <div className="text-xs space-y-1 whitespace-normal w-48">
       {requirements.map((req, index) => (
-        <div 
+        <div
           key={index}
           className={`flex items-center gap-2 ${
-            req.isValid ? 'text-green-600' : 'text-muted-foreground'
+            req.isValid ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
           }`}
         >
           <span className="text-xs">•</span>
@@ -46,7 +43,7 @@ export const PasswordRequirementsTooltip = ({
   );
 
   return (
-    <Tooltip 
+    <Tooltip
       content={tooltipContent}
       position="top"
       className={className}

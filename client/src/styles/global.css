@@ -118,6 +118,38 @@
   }
 }
 
+@keyframes hud-spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hud-spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.hud-spin-slow,
+.hud-spin-reverse {
+  transform-box: fill-box;
+  transform-origin: 250px 270px;
+}
+
+.hud-spin-slow {
+  animation: hud-spin-slow 55s linear infinite;
+}
+
+.hud-spin-reverse {
+  animation: hud-spin-reverse 40s linear infinite;
+}
+
 * {
   box-sizing: border-box !important;
   -webkit-font-smoothing: antialiased;
@@ -127,6 +159,126 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-    "Helvetica Neue", sans-serif !important;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif !important;
+}
+
+/* View Transitions */
+.view-transition-card {
+  view-transition-name: auth-card;
+}
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vt-slide-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-24px) scale(0.98);
+  }
+}
+
+@keyframes vt-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+::view-transition-old(root) {
+  animation: vt-fade-out 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+::view-transition-new(root) {
+  animation: vt-fade-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+::view-transition-old(auth-card) {
+  animation: vt-slide-out-left 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+::view-transition-new(auth-card) {
+  animation: vt-slide-in-right 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(auth-card),
+  ::view-transition-new(auth-card) {
+    animation: none;
+  }
+}
+
+/* Micro animations */
+@keyframes strength-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(220%);
+  }
+}
+
+@keyframes fade-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up-in {
+  animation: fade-up-in 0.3s ease-out both;
+}
+
+@keyframes icon-swap {
+  from {
+    opacity: 0;
+    transform: scale(0.6) rotate(-12deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.animate-icon-swap {
+  animation: icon-swap 0.22s ease-out both;
 }

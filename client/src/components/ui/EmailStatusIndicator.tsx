@@ -8,16 +8,16 @@ interface EmailStatusIndicatorProps {
   isNetworkError: boolean;
 }
 
-export const EmailStatusIndicator = ({ 
-  isChecking, 
+export const EmailStatusIndicator = ({
+  isChecking,
   message,
   hasError,
   hasSuccess,
-  isNetworkError
+  isNetworkError,
 }: EmailStatusIndicatorProps) => {
   if (isChecking) {
     return (
-      <div className={classNames("text-xs text-blue-600 flex items-center")}>
+      <div className={classNames("text-xs text-blue-400 flex items-center")}>
         <span className="animate-pulse">Checking email...</span>
       </div>
     );
@@ -25,11 +25,13 @@ export const EmailStatusIndicator = ({
 
   if (message) {
     return (
-      <div className={classNames("text-xs flex items-center gap-1", {
-        "text-green-600": hasSuccess,
-        "text-red-600": hasError,
-        "text-orange-600": isNetworkError
-      })}>
+      <div
+        className={classNames("text-xs flex items-center gap-1", {
+          "text-green-400": hasSuccess,
+          "text-red-400": hasError,
+          "text-orange-400": isNetworkError,
+        })}
+      >
         {message}
       </div>
     );

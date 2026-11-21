@@ -6,6 +6,10 @@ export const REFRESH_TOKEN_COOKIE = "refresh_token";
 // Bandera NO httpOnly (sin secretos): permite al frontend saber si hay sesión
 // sin llamar a la API. Siempre se emite/limpia junto a los tokens.
 export const SESSION_FLAG_COOKIE = "session_present";
+// Dos cookies de token con rutas distintas a propósito:
+//   · access  → path "/"          viaja con TODAS las peticiones.
+//   · refresh → path "/api/auth"  solo refresh/logout lo reciben: mínima
+//                                 exposición del token más valioso.
 
 const ACCESS_TOKEN_MAX_AGE_MS = 15 * 60 * 1000;
 
@@ -18,6 +22,8 @@ export const REFRESH_TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 const DOMAIN_OPTIONS = COOKIE_DOMAIN.length > 0 ? { domain: COOKIE_DOMAIN } : {};
 
 export function setAuthCookies(res: Response, accessToken: string, refreshToken: string): void {
+  // Opciones comunes de los tokens: httpOnly (JS no puede leerlas), sameSite
+  // lax (no viajan en peticiones cross-site) y secure solo en producción (HTTPS).
   const base = {
     httpOnly: true,
     sameSite: "lax",
@@ -46,6 +52,8 @@ export function setAuthCookies(res: Response, accessToken: string, refreshToken:
 }
 
 export function clearAuthCookies(res: Response): void {
+  // Borrar con los MISMOS path/domain con los que se emitió: con otros
+  // atributos el navegador considera que es otra cookie y no la elimina.
   res.clearCookie(ACCESS_TOKEN_COOKIE, { path: "/", ...DOMAIN_OPTIONS });
   res.clearCookie(REFRESH_TOKEN_COOKIE, { path: "/api/auth", ...DOMAIN_OPTIONS });
   res.clearCookie(SESSION_FLAG_COOKIE, { path: "/", ...DOMAIN_OPTIONS });

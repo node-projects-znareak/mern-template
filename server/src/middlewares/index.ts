@@ -23,6 +23,14 @@ function normalizeAccessToken(value: string): string | undefined {
   return JWT_TOKEN_PATTERN.test(token) ? token : undefined;
 }
 
+// Flujo de verificación del access token (protege todo /api/user):
+//   1. Leer la cookie httpOnly `access_token` (único canal; sin Bearer).
+//   2. Normalizar: algunos proxies añaden comillas o espacios al valor.
+//   3. Verificar firma/exp/iss/aud/type → SOLO los fallos de token dan 401.
+//   4. Cargar el usuario de la BD → un fallo de BD va al handler global (500).
+//   5. Si passwordChangedAt es posterior al iat → sesión emitida antes del
+//      cambio de contraseña → 401 (muere sin esperar a que expire el access).
+//   6. Adjuntar req.session / req.user y continuar con la ruta.
 export default async function requiredUserAuth(
   req: Request,
   res: Response,

@@ -65,6 +65,11 @@ class AuthController {
     }
   }
 
+  // Renovación de sesión: 
+  // 1) leer el refresh de su cookie, 
+  // 2) ROTARLO (uso único; null = inválido, reusado o robado → limpiar cookies y 401),
+  // 3) recargar el usuario 
+  // 4) re-emitir el NUEVO par en las cookies.
   async refresh(this: void, req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE] as string | undefined;
@@ -98,6 +103,8 @@ class AuthController {
     }
   }
 
+  // Logout: revoca solo el refresh presentado (muere en BD) y limpia cookies.
+  // El access no se revoca (es stateless): expira solo en ≤15 minutos.
   async logout(this: void, req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE] as string | undefined;

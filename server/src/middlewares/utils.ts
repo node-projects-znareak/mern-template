@@ -112,7 +112,16 @@ export const CSRF_ORIGIN_GUARD: RequestHandler = (req, res, next) => {
   }
 
   const origin = req.get("origin");
-  if (origin !== undefined && !API.CORS_ALLOWED_DOMAINS.includes(origin)) {
+
+  // Sin cabecera Origin en una petición de escritura (curl/Postman/sin navegador):
+  // se rechaza. En un navegador moderno toda petición POST/PUT/DELETE/PATCH,
+  // incluso same-origin, lleva Origin, así que el frontend no se rompe.
+  if (origin === undefined) {
+    error(res, "Origin header is required", 403);
+    return;
+  }
+
+  if (!API.CORS_ALLOWED_DOMAINS.includes(origin)) {
     error(res, "Origin not allowed", 403);
     return;
   }

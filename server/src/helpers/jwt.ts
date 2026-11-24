@@ -22,6 +22,9 @@ const VERIFY_OPTIONS: VerifyOptions = {
   algorithms: [TOKEN_ALGORITHM],
   audience: TOKEN_AUDIENCE,
   issuer: TOKEN_ISSUER,
+  // Margen en segundos para deriva de reloj entre nodos (relevante al escalar
+  // a varias réplicas): evita rechazar tokens válidos por desfase de `exp`.
+  clockTolerance: 5,
 };
 
 export interface VerifiedAccessToken {
